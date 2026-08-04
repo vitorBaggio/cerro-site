@@ -1,0 +1,15 @@
+# Arquivos gerados de pré-visualização (cada um pesa mais de 1 MB)
+PREVIEW-*.html
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Dependências, caso um dia entre alguma ferramenta
+node_modules/

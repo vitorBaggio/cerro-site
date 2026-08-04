@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cerrô · duas versões do site</title>
+<meta name="description" content="Duas propostas de site para a Cerrô, Banho do Cerrado. Escolha uma para visitar.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F7F1E8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<link rel="icon" href="v1/assets/img/favicon.svg" type="image/svg+xml">
+
+<style>
+  :root {
+    --areia:  #F7F1E8;
+    --morna:  #EADDC8;
+    --papel:  #FFFCF7;
+    --barro:  #AF6544;
+    --terra:  #3A2A20;
+    --suave:  #6B5949;
+    --carvao: #2A1E18;
+    --linha:  rgba(107, 89, 73, .26);
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans:  'Jost', 'Segoe UI', system-ui, sans-serif;
+    --calma: cubic-bezier(.19, 1, .22, 1);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0; min-height: 100vh;
+    display: grid; place-items: center;
+    padding: clamp(2rem, 6vw, 5rem) 1.25rem;
+    font-family: var(--sans); font-weight: 400;
+    color: var(--terra); line-height: 1.7;
+    background-color: var(--areia);
+    background-image:
+      radial-gradient(1100px 700px at 12% -5%, rgba(199,147,85,.13), transparent 62%),
+      radial-gradient(900px 650px at 92% 22%,  rgba(175,101,68,.09), transparent 60%);
+  }
+
+  .folha { width: min(100%, 980px); }
+
+  header { text-align: center; margin-bottom: clamp(2.5rem, 6vw, 4rem); }
+
+  .marca {
+    font-family: var(--serif); font-weight: 300;
+    font-size: clamp(2.6rem, 8vw, 4.4rem);
+    letter-spacing: .14em; color: var(--barro);
+    margin: 0 0 .3rem;
+  }
+  .assinatura {
+    font-size: .6rem; letter-spacing: .34em; text-transform: uppercase;
+    color: var(--suave); margin: 0 0 1.6rem;
+  }
+  .chamada {
+    font-family: var(--serif); font-style: italic;
+    font-size: clamp(1.1rem, 2.6vw, 1.5rem);
+    color: var(--terra); margin: 0 auto; max-width: 30ch;
+  }
+
+  .duas {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .opcao {
+    display: flex; flex-direction: column;
+    background: var(--papel);
+    border: 1px solid var(--linha);
+    border-radius: 26px; overflow: hidden;
+    color: inherit; text-decoration: none;
+    transition: transform 700ms var(--calma), box-shadow 700ms var(--calma), border-color 700ms var(--calma);
+  }
+  .opcao:hover {
+    transform: translateY(-6px);
+    border-color: rgba(175,101,68,.45);
+    box-shadow: 0 26px 60px rgba(58,42,33,.14);
+  }
+
+  .opcao__figura { aspect-ratio: 16 / 10; overflow: hidden; background: var(--morna); }
+  .opcao__figura img { width: 100%; height: 100%; object-fit: cover; }
+
+  .opcao__corpo { padding: 1.6rem 1.7rem 1.9rem; display: flex; flex-direction: column; flex: 1; }
+
+  .opcao__selo {
+    font-size: .58rem; letter-spacing: .26em; text-transform: uppercase;
+    color: var(--barro); margin: 0 0 .7rem;
+  }
+  .opcao__nome { font-family: var(--serif); font-weight: 300; font-size: 1.9rem; margin: 0 0 .5rem; }
+  .opcao__texto { font-size: .92rem; color: var(--suave); margin: 0 0 1.4rem; flex: 1; }
+
+  .opcao__lista { list-style: none; margin: 0 0 1.6rem; padding: 0; display: grid; gap: .45rem; }
+  .opcao__lista li {
+    font-size: .82rem; color: var(--suave);
+    padding-left: 1.1rem; position: relative;
+  }
+  .opcao__lista li::before {
+    content: '·'; position: absolute; left: .25rem; color: var(--barro); font-weight: 700;
+  }
+
+  .opcao__botao {
+    align-self: flex-start;
+    padding: .95rem 2rem; border-radius: 999px;
+    background: var(--barro); color: var(--areia);
+    font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+  }
+
+  footer {
+    margin-top: clamp(2.5rem, 6vw, 4rem); text-align: center;
+    font-size: .8rem; color: var(--suave);
+  }
+  footer a { color: var(--barro); }
+
+  .aviso {
+    margin-top: 1.5rem; padding: 1rem 1.2rem;
+    background: rgba(175,101,68,.07);
+    border-left: 2px solid var(--barro); border-radius: 4px;
+    font-size: .82rem; color: var(--suave); text-align: left;
+    max-width: 640px; margin-inline: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+
+<body>
+<main class="folha">
+
+  <header>
+    <p class="marca">CERRÔ</p>
+    <p class="assinatura">Banho do Cerrado</p>
+    <p class="chamada">Duas propostas de site. Abra as duas, no computador e no celular.</p>
+  </header>
+
+  <div class="duas">
+
+    <a class="opcao" href="v1/">
+      <div class="opcao__figura">
+        <img src="v1/assets/img/hero-rituais.jpg" alt="Os produtos dos três rituais da Cerrô sobre uma mesa de madeira">
+      </div>
+      <div class="opcao__corpo">
+        <p class="opcao__selo">Versão 1</p>
+        <h2 class="opcao__nome">Loja</h2>
+        <p class="opcao__texto">
+          Vitrine direta. Em uma tela você já vê a foto, o slogan e o botão de comprar.
+          É a mais rápida para quem já sabe o que quer.
+        </p>
+        <ul class="opcao__lista">
+          <li>Guia de três perguntas que recomenda o ritual</li>
+          <li>Perguntas frequentes</li>
+          <li>Barra de compra fixa no celular</li>
+        </ul>
+        <span class="opcao__botao">Visitar</span>
+      </div>
+    </a>
+
+    <a class="opcao" href="v2/">
+      <div class="opcao__figura">
+        <img src="v2/assets/img/sabonete-despertar-da-terra.jpg" alt="Sabonete Brisa Rosada em close">
+      </div>
+      <div class="opcao__corpo">
+        <p class="opcao__selo">Versão 2</p>
+        <h2 class="opcao__nome">Apresentação</h2>
+        <p class="opcao__texto">
+          Seis atos em tela cheia. A rolagem não empurra a página, move o produto:
+          os rituais se abrem, os sabonetes se separam, as peças sobem em ordem.
+        </p>
+        <ul class="opcao__lista">
+          <li>Mesmo catálogo e mesma sacola da versão 1</li>
+          <li>Role devagar para ver o movimento</li>
+          <li>Home mais longa até o botão de comprar</li>
+        </ul>
+        <span class="opcao__botao">Visitar</span>
+      </div>
+    </a>
+
+  </div>
+
+  <footer>
+    <p>As duas usam o mesmo catálogo, o mesmo carrinho e o mesmo cadastro.
+       O que muda é a home.</p>
+    <div class="aviso">
+      <strong>Isto é um teste.</strong> O pagamento ainda não está ligado e os
+      cadastros ficam salvos só no navegador de quem visita, sem chegar até a
+      Cerrô. Os passos para ativar os dois estão em
+      <a href="docs/COMO-PUBLICAR.md">docs/COMO-PUBLICAR.md</a>.
+    </div>
+  </footer>
+
+</main>
+</body>
+</html>

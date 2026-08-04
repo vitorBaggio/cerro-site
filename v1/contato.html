@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contato | Cerrô · Banho do Cerrado</title>
+<meta name="description" content="Fale com a Cerrô por WhatsApp, e-mail ou Instagram. Dúvidas sobre pedidos, prazos, indicação de ritual e presentes corporativos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/estilo.css">
+</head>
+
+<body data-pagina="contato">
+<a class="pular-para" href="#conteudo">Pular para o conteúdo</a>
+
+<header data-cerro="topo"></header>
+
+<main id="conteudo">
+  <section class="secao">
+    <div class="container" style="max-width:960px">
+      <div class="duas-colunas" style="align-items:start">
+
+        <div>
+          <p class="olho">Fale com a gente</p>
+          <h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)">Estamos<br>por aqui</h1>
+          <hr class="filete">
+          <p class="intro">
+            Dúvida sobre um pedido, ajuda para escolher o ritual certo para a sua pele
+            ou uma encomenda especial: pode chamar.
+          </p>
+
+          <div class="dados-conta" style="margin-top:2.5rem">
+            <div class="dado">
+              <b>WhatsApp</b>
+              <a class="link-sublinhado" style="text-transform:none;letter-spacing:0"
+                 data-whatsapp-link href="#" target="_blank" rel="noopener">Chamar no WhatsApp</a>
+            </div>
+            <div class="dado">
+              <b>E-mail</b>
+              <span data-cfg="loja.email"></span>
+            </div>
+            <div class="dado">
+              <b>Instagram</b>
+              <span data-cfg="loja.instagram"></span>
+            </div>
+            <div class="dado">
+              <b>Onde estamos</b>
+              <span data-cfg="loja.cidade"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="painel">
+          <h2 style="font-size:1.6rem">Mande uma mensagem</h2>
+          <p style="font-size:.9rem;color:var(--terra-suave)">
+            Preencha e a conversa abre direto no WhatsApp, com tudo já escrito.
+          </p>
+
+          <form data-cerro="form-contato" novalidate style="margin-top:1.8rem">
+            <div class="campo">
+              <label for="ct-nome">Seu nome</label>
+              <input id="ct-nome" name="nome" type="text" autocomplete="name" required>
+            </div>
+
+            <div class="campo">
+              <label for="ct-assunto">Assunto</label>
+              <select id="ct-assunto" name="assunto">
+                <option>Quero ajuda para escolher meu ritual</option>
+                <option>Dúvida sobre um pedido</option>
+                <option>Prazos e entrega</option>
+                <option>Troca ou devolução</option>
+                <option>Presentes e encomendas especiais</option>
+                <option>Quero revender a Cerrô</option>
+                <option>Outro assunto</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="ct-mensagem">Mensagem</label>
+              <textarea id="ct-mensagem" name="mensagem" required></textarea>
+            </div>
+
+            <button class="btn btn--largo" type="submit">Abrir no WhatsApp</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-cerro="rodape"></footer>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/catalogo.js"></script>
+<script src="assets/js/loja.js"></script>
+<script src="assets/js/conta.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var form = document.querySelector('[data-cerro="form-contato"]');
+  if (!form) return;
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var d = Object.fromEntries(new FormData(form).entries());
+
+    if (!d.nome || !d.mensagem.trim()) {
+      window.CerroAvisar && window.CerroAvisar('Preencha o nome e a mensagem.');
+      return;
+    }
+
+    var texto = 'Olá! Sou ' + d.nome + '.\nAssunto: ' + d.assunto + '\n\n' + d.mensagem;
+    window.open(
+      'https://wa.me/' + window.CERRO_CONFIG.loja.whatsapp + '?text=' + encodeURIComponent(texto),
+      '_blank', 'noopener'
+    );
+  });
+});
+</script>
+</body>
+</html>

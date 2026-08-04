@@ -1,0 +1,12 @@
+# Cerrô · Banho do Cerrado
+# Trocar SEUDOMINIO pelo endereço real antes de publicar.
+
+User-agent: *
+Allow: /
+
+# Páginas sem valor para busca
+Disallow: /carrinho.html
+Disallow: /conta.html
+Disallow: /404.html
+
+Sitemap: https://SEUDOMINIO.com.br/sitemap.xml

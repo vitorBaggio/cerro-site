@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Marca da Cerrô: o sol nascendo sobre o horizonte do Cerrado -->
+  <rect width="64" height="64" rx="12" fill="#F5EEE4"/>
+
+  <g stroke="#A85C3C" stroke-width="3" stroke-linecap="round" fill="none">
+    <!-- raios -->
+    <path d="M32 10v6"/>
+    <path d="M18.5 15.5l4 4.5"/>
+    <path d="M45.5 15.5l-4 4.5"/>
+    <path d="M9 30h6"/>
+    <path d="M55 30h-6"/>
+
+    <!-- horizonte -->
+    <path d="M10 44h44"/>
+    <path d="M16 51h32"/>
+  </g>
+
+  <!-- sol -->
+  <path d="M18 39a14 14 0 0 1 28 0z" fill="#A85C3C"/>
+</svg>

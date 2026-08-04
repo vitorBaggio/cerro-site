@@ -1,0 +1,122 @@
+FOTOS DO SITE
+=============
+
+  hero-rituais.jpg                1920x1080   ABERTURA DA HOME
+  ritual-despertar-da-terra.jpg   1100x1100
+  ritual-pureza-nativa.jpg        1100x1100
+  ritual-sol-do-cerrado.jpg       1100x1100
+
+As três quadradas vieram das suas imagens originais, tratadas para web: os
+PNGs pesavam de 1,6 MB a 6 MB (o suficiente para o cliente desistir antes de
+carregar); agora nenhuma passa de 205 KB.
+
+Para trocar qualquer uma: salve por cima, com o mesmo nome. Quadrada,
+1200x1200, JPG qualidade 80, abaixo de 250 KB.
+
+
+A ABERTURA: hero-rituais.jpg
+-----------------------------
+É a foto do conjunto dos três rituais, com todos os potes e sabonetes sobre a
+mesa de madeira. Original: WebP 2000x1273. Aqui: JPG 1920x1222, 358 KB.
+
+Para trocar por outra: salve nesta pasta com o mesmo nome, em JPG, largura
+1920, abaixo de 400 KB. Nenhuma linha de código muda.
+
+Nenhum texto fica sobre esta foto: ela aparece sozinha no topo, de ponta a
+ponta, e todo o texto de abertura vem logo abaixo. Assim o produto não
+disputa atenção com a tipografia.
+
+Se o enquadramento cortar algo importante da sua foto, o ajuste é uma linha:
+em assets/css/estilo.css, na regra .hero__foto, mude o object-position
+(hoje "center 45%": número menor sobe o enquadramento, maior desce). A altura
+da faixa está na linha de cima, em height.
+
+
+OS SABONETES REDONDOS (só na versão 2)
+--------------------------------------
+  sabonete-pureza-nativa.jpg
+  sabonete-despertar-da-terra.jpg
+  sabonete-sol-do-cerrado.jpg
+
+São os sabonetes recortados EM CÍRCULO, do tamanho exato de cada um, já
+assentados sobre o fundo escuro do ato 3 (#17100C) e com a sombra embaixo.
+Chegam prontos: o CSS não aplica máscara nenhuma.
+
+Por que assim, e não com recorte quadrado: o quadrado cortava o sabonete em
+cima e embaixo. E por que não PNG com fundo transparente: o arquivo ficaria
+quatro vezes maior sem ganho visual, já que o fundo do ato é sempre o mesmo.
+
+ATENÇÃO: se o fundo do ato 3 mudar de cor, estas três imagens precisam ser
+refeitas, senão vai aparecer um quadrado escuro em volta do disco.
+
+Os centros e diâmetros usados, em fração da foto original de 1100x1100:
+
+  Pureza Nativa       centro (0,513 / 0,642)   diâmetro 0,322
+  Despertar da Terra  centro (0,535 / 0,633)   diâmetro 0,320
+  Sol do Cerrado      centro (0,511 / 0,638)   diâmetro 0,322
+
+A tela final tem 16% de folga em volta do disco, para caber a sombra.
+
+
+ONDE CADA FOTO APARECE
+----------------------
+1. Abertura da home: hero-rituais.jpg, de ponta a ponta, sem texto por cima.
+
+2. Cards dos rituais: quadrados (1:1), sem véu por cima. A foto é quadrada,
+   então nada é cortado nas laterais nem espremido. São três cards por linha.
+
+3. Página do ritual: a foto grande no topo, e depois um CLOSE de cada peça.
+   Como não existe foto individual de produto, o site amplia a mesma foto e
+   desloca o enquadramento:
+
+       geleia   -> pote da esquerda
+       sabonete -> centro
+       sais     -> pote da direita
+
+   Isso vive em assets/js/loja.js, na constante ENQUADRAMENTO. Se a composição
+   de uma foto futura mudar de posição, é lá que se ajusta.
+
+4. Trio de Sabonetes (home e página própria): os três sabonetes em círculos
+   sobrepostos, cada um recortado da foto do seu ritual.
+
+
+ATENÇÃO: O TEXTO DOS RÓTULOS
+-----------------------------
+Nas fotos atuais o texto dos rótulos está ilegível ("DESPERTAD DA TERRA",
+"CUREGE NATIVE", "SOL NO CVAHLAGO"). Agora que a foto aparece grande na
+abertura e nas páginas de ritual, isso ficou mais exposto.
+
+Foto do produto real, com o rótulo final impresso, é a melhoria de maior
+impacto que o site pode receber.
+
+
+POR QUE NÃO HÁ FOTOS DE AMBIENTE
+--------------------------------
+Foram testados bancos de imagem com licença livre para uso comercial. O que
+existe disponível é banheiro branco de catálogo, mármore, tons azulados e
+frios: o oposto do barro, do dourado e da madeira da Cerrô. Colocar isso no
+site quebraria a identidade em vez de ajudar.
+
+Se quiser fotos de ambiente, os caminhos que funcionam:
+
+  a) Fotografar. Três cenas resolvem o site inteiro:
+     1. O produto na borda de uma banheira ou box, luz quente lateral
+     2. Mão segurando o sabonete, fundo desfocado
+     3. Vapor sobre água quente, close, tons de barro
+
+  b) Comprar em banco pago (Adobe Stock, iStock). Buscar por termos como
+     "warm terracotta bathroom", "artisan soap wooden", "earthy spa ritual".
+
+Salve como ambiente-1.jpg, ambiente-2.jpg, ambiente-3.jpg e me avise que eu
+encaixo nas seções certas.
+
+
+FASE 2: fotos individuais de produto
+-------------------------------------
+Quando existirem, substituem os closes recortados. Nomes previstos:
+
+  produto-brisa-rosada.jpg           produto-petalas-do-deserto.jpg
+  produto-nectar-suave.jpg           produto-toque-de-algodao.jpg
+  produto-nuvem-de-areia.jpg         produto-orvalho-da-alvorada.jpg
+  produto-frescor-do-amanhecer.jpg   produto-por-do-sol.jpg
+  produto-gotas-de-ouro.jpg

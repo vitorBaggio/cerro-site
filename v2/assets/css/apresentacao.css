@@ -1,0 +1,498 @@
+/* ==========================================================================
+   Cerrô v2 · Apresentação
+   --------------------------------------------------------------------------
+   Folha que roda por cima de estilo.css, só na home. A gramática é a das
+   páginas de produto da Apple: telas inteiras, uma ideia por tela, o produto
+   se movendo conforme a pessoa desce, e tipografia grande com pouca conversa.
+
+   A paleta é exatamente a mesma da versão 1. O que muda é a encenação.
+
+   Como ler as regras: `var(--p)` é o progresso da cena, de 0 a 1, escrito
+   pelo cena.js a cada quadro. `--p1`, `--p2`, `--p3` são as etapas dentro
+   dela. Tudo que se move é calculado a partir desses números.
+   ========================================================================== */
+
+:root {
+  --preto:  #17100C;   /* o carvão levado ao extremo, para telas cheias */
+  --tela:   100vh;
+}
+
+/* Em telas de celular a barra do navegador some e volta, e 100vh pula.
+   dvh resolve onde existe. */
+@supports (height: 100dvh) {
+  :root { --tela: 100dvh; }
+}
+
+/* ==========================================================================
+   Estrutura das cenas
+   ========================================================================== */
+
+.cena {
+  position: relative;
+  height: var(--altura, 300vh);
+  --p: 0; --p1: 0; --p2: 0; --p3: 0; --p4: 0;
+}
+
+.cena__palco {
+  position: sticky; top: 0;
+  height: var(--tela);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.cena__palco > .container { width: min(100% - 2.5rem, 1240px); }
+
+/* --------------------------------------------------------------------------
+   Palco em três faixas
+   O título ficava posicionado de forma absoluta e o produto, centralizado no
+   palco, subia por cima dele em telas mais baixas. Agora são três faixas em
+   coluna: título em cima, produto no meio, números embaixo. Elas dividem a
+   altura da tela entre si e, por construção, nunca se sobrepõem.
+   -------------------------------------------------------------------------- */
+
+.palco-coluna {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(.75rem, 2.5vh, 2rem);
+  width: 100%; height: 100%;
+  /* o topo desconta o cabeçalho grudado, senão o título nasce atrás dele */
+  padding: clamp(5.5rem, 13vh, 8.5rem) 0 clamp(1.5rem, 5vh, 3.5rem);
+}
+
+.palco-topo { text-align: center; }
+.palco-topo .etiqueta { justify-content: center; margin-bottom: 1rem; }
+.palco-topo .titulo-cena { font-size: clamp(2rem, 5.4vw, 4.4rem); }
+
+.palco-meio { min-height: 0; display: grid; place-items: center; width: 100%; }
+
+.palco-base { text-align: center; }
+
+.sem-cena .palco-coluna { height: auto; padding: 0; }
+.sem-cena .palco-meio { min-height: auto; }
+
+/* Palco escuro: tela cheia de verdade, sem cantos arredondados */
+.cena--escura .cena__palco { background: var(--preto); color: rgba(247,241,232,.72); }
+.cena--escura h1, .cena--escura h2, .cena--escura h3 { color: var(--areia); }
+
+/* Sem movimento (preferência do sistema): vira conteúdo empilhado normal */
+.sem-cena .cena { height: auto; }
+.sem-cena .cena__palco { position: static; height: auto; padding: clamp(3rem,8vw,6rem) 0; }
+.sem-cena [class*="anima"] { transform: none !important; opacity: 1 !important; }
+
+/* ==========================================================================
+   Tipografia da apresentação
+   ========================================================================== */
+
+.titulo-cena {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(2.6rem, 7.5vw, 6.5rem);
+  line-height: 1.02;
+  letter-spacing: -.015em;
+  margin: 0;
+}
+
+.titulo-cena em {
+  font-style: italic;
+  color: var(--barro);
+}
+.cena--escura .titulo-cena em { color: var(--dourado); }
+
+.legenda-cena {
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  color: var(--terra-suave);
+  max-width: 44ch;
+  margin: 1.4rem 0 0;
+}
+.cena--escura .legenda-cena { color: rgba(247,241,232,.68); }
+
+.etiqueta {
+  display: inline-flex; align-items: center; gap: .7rem;
+  font-size: .64rem; letter-spacing: .34em; text-transform: uppercase;
+  color: var(--barro); margin-bottom: 1.6rem;
+}
+.etiqueta::before {
+  content: ''; width: 30px; height: 1px;
+  background: currentColor; opacity: .6;
+}
+.cena--escura .etiqueta { color: var(--dourado); }
+
+/* ==========================================================================
+   ATO 1 · Abertura
+   A foto do conjunto recua e desfoca conforme a pessoa desce, entregando a
+   cena para o texto. É o único momento em que a foto ocupa tudo.
+   ========================================================================== */
+
+.abertura__foto {
+  position: absolute; inset: 0; z-index: -2;
+  width: 100%; height: 100%; object-fit: cover;
+  transform: scale(calc(1.14 - var(--p) * 0.14));
+  filter: brightness(calc(1 - var(--p) * 0.42)) blur(calc(var(--p) * 5px));
+  will-change: transform, filter;
+}
+
+.abertura__veu {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(23,16,12,.55) 0%, rgba(23,16,12,.10) 30%, rgba(23,16,12,.75) 100%);
+  opacity: calc(.35 + var(--p) * .65);
+}
+
+.abertura__conteudo {
+  text-align: center; color: var(--areia);
+  transform: translateY(calc(var(--p) * -3vh));
+}
+.abertura__conteudo .titulo-cena { color: var(--areia); }
+.abertura__conteudo .etiqueta { color: var(--dourado); justify-content: center; }
+
+.abertura__marca {
+  font-family: var(--serif);
+  font-size: clamp(3.4rem, 12vw, 9rem);
+  letter-spacing: .16em;
+  line-height: 1;
+  margin: 0 0 .2em;
+  color: var(--areia);
+  /* a marca cresce de leve enquanto a foto recua: dá sensação de aproximação */
+  transform: scale(calc(1 + var(--p) * 0.06));
+}
+
+.abertura__linha {
+  font-family: var(--serif); font-style: italic;
+  font-size: clamp(1.1rem, 2.4vw, 1.7rem);
+  color: var(--dourado);
+  opacity: calc(1 - var(--p) * .8);
+}
+
+.rolar {
+  position: absolute; left: 50%; bottom: 2.5rem; z-index: 3;
+  transform: translateX(-50%);
+  display: grid; justify-items: center; gap: .8rem;
+  font-size: .56rem; letter-spacing: .32em; text-transform: uppercase;
+  color: rgba(247,241,232,.55);
+  opacity: calc(1 - var(--p) * 2.5);
+  pointer-events: none;
+}
+.rolar span:last-child {
+  width: 1px; height: 44px;
+  background: linear-gradient(180deg, rgba(247,241,232,.75), transparent);
+  animation: descer 3s ease-in-out infinite;
+}
+@keyframes descer {
+  0%, 100% { opacity: .2; transform: scaleY(.6); transform-origin: top; }
+  50%      { opacity: 1;  transform: scaleY(1);  transform-origin: top; }
+}
+
+/* ==========================================================================
+   ATO 2 · A separação
+   Os três rituais chegam empilhados, como um baralho, e se abrem em leque.
+   É a tradução literal de "separar os produtos um do outro".
+   ========================================================================== */
+
+.leque { position: relative; width: min(92vw, 1100px); height: min(62vh, 560px); }
+
+.leque__peca {
+  position: absolute; top: 50%; left: 50%;
+  width: clamp(180px, 26vw, 320px);
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(35,22,14,.30);
+  will-change: transform;
+}
+.leque__peca img { width: 100%; height: 100%; object-fit: cover; }
+
+/* No começo (p=0) as três estão sobrepostas no centro, levemente giradas.
+   No fim (p=1) estão lado a lado, retas. O deslocamento é em vw para
+   acompanhar a largura da tela. */
+.leque__peca--1 {
+  transform: translate(-50%, -50%)
+             translateX(calc(var(--p1) * -30vw))
+             rotate(calc(-7deg + var(--p1) * 7deg))
+             scale(calc(0.88 + var(--p1) * 0.12));
+  z-index: 1;
+}
+.leque__peca--2 {
+  transform: translate(-50%, -50%)
+             translateY(calc(var(--p1) * -1vh))
+             scale(calc(0.94 + var(--p1) * 0.06));
+  z-index: 3;
+}
+.leque__peca--3 {
+  transform: translate(-50%, -50%)
+             translateX(calc(var(--p1) * 30vw))
+             rotate(calc(7deg - var(--p1) * 7deg))
+             scale(calc(0.88 + var(--p1) * 0.12));
+  z-index: 2;
+}
+
+/* Os nomes só entram depois que as peças terminam de se abrir */
+.leque__nomes {
+  position: absolute; inset: auto 0 -3.5rem 0;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1rem; text-align: center;
+  opacity: var(--p2);
+  transform: translateY(calc((1 - var(--p2)) * 20px));
+}
+.leque__nome { font-family: var(--serif); font-size: clamp(.95rem, 1.7vw, 1.35rem); }
+.leque__nome span {
+  display: block; font-family: var(--sans);
+  font-size: .58rem; letter-spacing: .24em; text-transform: uppercase;
+  color: var(--terra-suave); margin-top: .35rem;
+}
+.cena--escura .leque__nome span { color: rgba(247,241,232,.6); }
+
+.leque__titulo {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  text-align: center; pointer-events: none;
+  opacity: calc(1 - var(--p1) * 2);
+}
+
+@media (max-width: 720px) {
+  .leque { height: min(52vh, 420px); }
+  .leque__peca { width: clamp(140px, 44vw, 220px); }
+  .leque__peca--1 { transform: translate(-50%,-50%) translateX(calc(var(--p1) * -26vw)) translateY(calc(var(--p1) * -14vh)) rotate(calc(-7deg + var(--p1) * 7deg)); }
+  .leque__peca--3 { transform: translate(-50%,-50%) translateX(calc(var(--p1) * 26vw)) translateY(calc(var(--p1) * 14vh)) rotate(calc(7deg - var(--p1) * 7deg)); }
+  .leque__nomes { display: none; }
+}
+
+/* ==========================================================================
+   ATO 3 · Os três sabonetes se abrem
+   Chegam empilhados e se abrem em leque, os três inteiros e visíveis lado a
+   lado. Sem máscara redonda e sem recorte: o quadro é o próprio recorte
+   quadrado da foto, então o sabonete aparece por completo.
+   ========================================================================== */
+
+.abre {
+  position: relative;
+  width: min(94vw, 1060px);
+  height: 100%;
+  min-height: clamp(220px, 34vh, 420px);
+}
+
+/* O tamanho olha para a largura E para a altura da tela. Só com vw, num
+   notebook de tela baixa a peça ficava alta demais e subia por cima do
+   título. O min() faz vencer a dimensão mais apertada das duas. */
+.abre__peca {
+  position: absolute; top: 50%; left: 50%;
+  width: clamp(120px, min(20vw, 25vh), 260px);
+  margin: 0;
+  will-change: transform;
+}
+
+/* Sem borda arredondada e sem sombra de caixa aqui de propósito: o disco já
+   vem recortado em círculo na própria imagem, com a sombra embaixo, assentado
+   no mesmo tom de fundo deste ato. Qualquer moldura quadrada denunciaria o
+   recorte. Se o fundo do ato mudar de cor, as imagens precisam ser refeitas
+   (o script está em assets/img/LEIA-ME.txt). */
+.abre__peca img {
+  width: 100%; aspect-ratio: 1;
+  object-fit: contain;
+}
+
+/* Empilhados no centro em p=0, abertos e retos em p=1.
+   O leve degrau vertical evita que os três pareçam um bloco só. */
+.abre__peca--1 {
+  transform: translate(-50%, -50%)
+             translateX(calc(var(--p1) * -25vw))
+             translateY(calc(var(--p1) * 3vh))
+             rotate(calc(-8deg + var(--p1) * 8deg))
+             scale(calc(.82 + var(--p1) * .18));
+  z-index: 1;
+}
+.abre__peca--2 {
+  transform: translate(-50%, -50%)
+             translateY(calc(var(--p1) * -2vh))
+             scale(calc(.9 + var(--p1) * .1));
+  z-index: 3;
+}
+.abre__peca--3 {
+  transform: translate(-50%, -50%)
+             translateX(calc(var(--p1) * 25vw))
+             translateY(calc(var(--p1) * 3vh))
+             rotate(calc(8deg - var(--p1) * 8deg))
+             scale(calc(.82 + var(--p1) * .18));
+  z-index: 2;
+}
+
+/* As legendas só entram depois de abrir, senão ficariam empilhadas */
+.abre__peca figcaption {
+  margin-top: .9rem; text-align: center;
+  font-family: var(--serif); font-size: clamp(.9rem, 1.5vw, 1.15rem);
+  color: var(--areia);
+  opacity: var(--p2);
+}
+.abre__peca figcaption span {
+  display: block; font-family: var(--sans);
+  font-size: .54rem; letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(247,241,232,.55); margin-top: .3rem;
+}
+
+@media (max-width: 760px) {
+  /* No celular abrem em coluna: lado a lado ficariam pequenos demais */
+  /* Abertura menor na vertical: com 14vh a peça de cima encostava no título
+     em telas de 640px de altura, que ainda são comuns. */
+  .abre__peca { width: clamp(104px, min(36vw, 19vh), 180px); }
+  .abre__peca--1 {
+    transform: translate(-50%,-50%) translateX(calc(var(--p1) * -30vw))
+               translateY(calc(var(--p1) * -10vh)) rotate(calc(-8deg + var(--p1) * 8deg))
+               scale(calc(.82 + var(--p1) * .18));
+  }
+  .abre__peca--3 {
+    transform: translate(-50%,-50%) translateX(calc(var(--p1) * 30vw))
+               translateY(calc(var(--p1) * 10vh)) rotate(calc(8deg - var(--p1) * 8deg))
+               scale(calc(.82 + var(--p1) * .18));
+  }
+  .abre__peca figcaption { font-size: .78rem; }
+}
+
+.giro__dados {
+  display: flex; justify-content: center; gap: clamp(1.5rem, 5vw, 4rem);
+  text-align: center;
+  opacity: var(--p2);
+}
+.giro__dado b {
+  display: block; font-family: var(--serif); font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 300; color: var(--areia); line-height: 1;
+}
+.giro__dado span {
+  font-size: .56rem; letter-spacing: .24em; text-transform: uppercase;
+  color: rgba(247,241,232,.5);
+}
+
+/* ==========================================================================
+   ATO 4 · As três peças
+   Elas sobem uma depois da outra, cada uma com o seu nome e a sua medida.
+   ========================================================================== */
+
+.trinca {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: end;
+  width: min(92vw, 1100px);
+  max-height: 100%;
+}
+
+/* O piso de 0,14 de opacidade existe para o palco nunca ficar vazio quando a
+   cena prende na tela. As peças já estão lá, apagadas, e sobem para o foco. */
+/* min-width: 0 é obrigatório aqui. Sem ele, a coluna do grid cresce para
+   caber a figura inteira e a fileira estoura a largura da tela. */
+.trinca__item {
+  min-width: 0;
+  text-align: center;
+  transform: translateY(calc((1 - var(--eta)) * 22vh));
+  opacity: calc(.14 + var(--eta) * .86);
+  will-change: transform;
+}
+.trinca__item:nth-child(1) { --eta: var(--p1); }
+.trinca__item:nth-child(2) { --eta: var(--p2); }
+.trinca__item:nth-child(3) { --eta: var(--p3); }
+
+/* A altura manda, não a largura: assim a peça nunca cresce além da faixa do
+   meio e nunca encosta no título. A largura vem da proporção. */
+.trinca__figura {
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 26px 60px rgba(35,22,14,.28);
+  aspect-ratio: 3 / 4;
+  height: clamp(170px, 40vh, 400px);
+  width: auto; max-width: 100%;
+  margin-inline: auto;
+  background: var(--areia-morna);
+}
+.trinca__figura img { width: 100%; height: 100%; object-fit: cover; }
+
+.trinca__nome { font-family: var(--serif); font-size: clamp(1.05rem, 2vw, 1.6rem); margin: 1.1rem 0 .2rem; }
+.trinca__meta { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--terra-suave); }
+.cena--escura .trinca__meta { color: rgba(247,241,232,.58); }
+
+/* No celular as três continuam lado a lado, só que menores. Empilhadas em
+   coluna elas somavam mais de 900px de altura e estouravam a tela: a última
+   nunca chegava a aparecer inteira. Lado a lado, a ideia de sequência
+   (primeiro, depois, por último) também fica mais clara. */
+@media (max-width: 720px) {
+  .trinca { gap: .55rem; }
+  .trinca__figura { height: clamp(110px, 21vh, 190px); border-radius: 12px; }
+  .trinca__nome { font-size: .88rem; margin: .7rem 0 .15rem; line-height: 1.2; }
+  .trinca__meta { font-size: .48rem; letter-spacing: .1em; line-height: 1.5; }
+  .trinca__item { transform: translateY(calc((1 - var(--eta)) * 14vh)); }
+}
+
+/* ==========================================================================
+   ATO 5 · Os ativos
+   Palavras grandes que se aproximam. Sem foto: aqui o assunto é a fórmula.
+   ========================================================================== */
+
+.ativos-cena {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: clamp(.6rem, 1.6vw, 1.4rem);
+  width: min(92vw, 1000px);
+}
+.ativos-cena span {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 4.2vw, 3.2rem);
+  font-weight: 300;
+  line-height: 1.1;
+  color: rgba(247,241,232,.28);
+  transition: color 600ms ease;
+}
+/* Vão acendendo em ondas conforme o progresso avança */
+.ativos-cena span:nth-child(3n+1) { color: rgba(247,241,232,calc(.22 + var(--p1) * .78)); }
+.ativos-cena span:nth-child(3n+2) { color: rgba(247,241,232,calc(.22 + var(--p2) * .78)); }
+.ativos-cena span:nth-child(3n)   { color: rgba(247,241,232,calc(.22 + var(--p3) * .78)); }
+
+.ativos-cena span em { font-style: normal; color: var(--dourado); }
+
+/* ==========================================================================
+   ATO 6 · Escolha
+   Três painéis grandes. Aqui a apresentação vira loja.
+   ========================================================================== */
+
+.escolha {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 2.4vw, 2rem);
+  width: min(94vw, 1240px);
+}
+
+.escolha__painel {
+  position: relative;
+  display: flex; flex-direction: column;
+  border-radius: 24px; overflow: hidden;
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  text-align: left;
+  transition: transform 600ms var(--calma), box-shadow 600ms var(--calma);
+}
+.escolha__painel:hover { transform: translateY(-8px); box-shadow: var(--sombra-alta); }
+
+.escolha__figura { aspect-ratio: 1; overflow: hidden; }
+.escolha__figura img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--calma); }
+.escolha__painel:hover .escolha__figura img { transform: scale(1.05); }
+
+.escolha__corpo { padding: 1.5rem 1.6rem 1.8rem; display: flex; flex-direction: column; flex: 1; }
+.escolha__nome { font-family: var(--serif); font-size: clamp(1.2rem, 2.2vw, 1.7rem); margin: 0 0 .25rem; }
+.escolha__sub { font-family: var(--serif); font-style: italic; color: var(--barro); margin: 0 0 .8rem; }
+.escolha__essencias { font-size: .58rem; letter-spacing: .22em; text-transform: uppercase; color: var(--terra-suave); margin: 0 0 1.2rem; }
+.escolha__preco { font-family: var(--serif); font-size: 1.4rem; margin-top: auto; }
+
+@media (max-width: 860px) {
+  .escolha { grid-template-columns: 1fr; }
+  .escolha__figura { aspect-ratio: 16/10; }
+}
+
+/* ==========================================================================
+   Barra de progresso da apresentação
+   Um fio fino no topo, mostrando onde a pessoa está na história.
+   ========================================================================== */
+
+.fio-progresso {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 200;
+  background: transparent; pointer-events: none;
+}
+.fio-progresso__interno {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--barro), var(--dourado));
+  transition: width 120ms linear;
+}
