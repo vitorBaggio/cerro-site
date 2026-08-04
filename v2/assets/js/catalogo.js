@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Cerrô · Catálogo
    --------------------------------------------------------------------------
    Todo o conteúdo de produto do site vem daqui. Mudou o preço? Mude aqui e
@@ -188,7 +188,7 @@ window.CERRO_CATALOGO = {
     subtitulo: 'Um de cada ritual',
     preco: 84.00,
     medida: '3 × 80 g',
-    foto: 'assets/img/trio-de-sabonetes.jpg',
+    foto: 'assets/img/ritual-despertar-da-terra.jpg',
     texto: 'Os três sabonetes da casa, um de cada ritual: Brisa Rosada, Toque de Algodão e Frescor do Amanhecer. A forma mais direta de conhecer as três essências da Cerrô e descobrir qual delas é a sua.',
     itens: ['Brisa Rosada, com romã, pitanga e hibisco', 'Toque de Algodão, com baunilha e sândalo', 'Frescor do Amanhecer, com copaíba e capim-limão'],
   },
