@@ -1,6 +1,12 @@
-﻿# Cerrô · site
+﻿# Cerrô · como publicar
 
-Site pronto para navegar. Abra o arquivo `index.html` com um duplo clique.
+> **Sobre os caminhos deste documento.** Onde estiver escrito
+> `assets/js/config.js`, leia `v1/assets/js/config.js` **ou**
+> `v2/assets/js/config.js`, conforme a versão que você for usar.
+> As duas têm a mesma estrutura interna, e cada uma tem a sua própria cópia
+> desses arquivos: mexer numa não muda a outra.
+
+Site pronto para navegar. Abra o `index.html` da raiz com um duplo clique.
 
 ---
 
