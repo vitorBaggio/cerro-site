@@ -82,7 +82,12 @@ body {
   background-attachment: fixed;
 }
 
-img { max-width: 100%; display: block; }
+/* height: auto na base é uma proteção, não enfeite. Toda tag de imagem
+   declara width e height para reservar espaço e evitar salto de layout, e
+   esse height entra como altura real sempre que o CSS não disser o contrário.
+   Sem esta linha, qualquer regra que defina só a largura faz a imagem esticar.
+   Regras mais específicas (height: 100%, por exemplo) continuam vencendo. */
+img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration: none; }
 
 h1, h2, h3, h4 {

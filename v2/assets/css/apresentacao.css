@@ -331,8 +331,13 @@
 
    A sombra é drop-shadow, e não box-shadow, porque drop-shadow segue o
    contorno recortado. box-shadow desenharia um quadrado atrás do círculo. */
+/* height: auto é obrigatório aqui. A tag da imagem declara height="620" para
+   reservar espaço e evitar salto de layout, e esse valor entra como altura
+   real se o CSS não disser o contrário. Sem height:auto, aspect-ratio não
+   calcula nada: o disco virava uma tira alta e o recorte redondo cortava só
+   o topo. */
 .abre__peca img {
-  width: 100%; aspect-ratio: 1;
+  width: 100%; height: auto; aspect-ratio: 1;
   object-fit: cover;
   clip-path: circle(50% at 50% 50%);
   filter:
