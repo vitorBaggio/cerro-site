@@ -28,7 +28,32 @@
   "description": "Saboaria artesanal do Cerrado. Sabonetes, sais e geleias de banho feitos à mão em três rituais completos.",
   "image": "https://SEUDOMINIO.com.br/assets/img/hero-rituais.jpg",
   "priceRange": "R$ 28 - R$ 120",
-  "currenciesAccepted": "BRL"
+  "currenciesAccepted": "BRL",
+  "makesOffer": [
+    { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Ritual Despertar da Terra" }, "price": "120.00", "priceCurrency": "BRL" },
+    { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Ritual Pureza Nativa" },      "price": "120.00", "priceCurrency": "BRL" },
+    { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Ritual Sol do Cerrado" },     "price": "120.00", "priceCurrency": "BRL" },
+    { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Trio de Sabonetes" },         "price": "84.00",  "priceCurrency": "BRL" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Quanto tempo dura um ritual completo?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Em uso regular, de duas a três vezes por semana, o ritual completo dura de seis a oito semanas. O sabonete de 80 g costuma acabar primeiro; os sais de 200 g rendem cerca de oito banhos de imersão, e a geleia de 350 ml é a que dura mais." } },
+    { "@type": "Question", "name": "Preciso de banheira para usar os sais de banho?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Não. Sem banheira, dissolva uma colher dos sais em uma bacia de água bem quente e use com uma bucha úmida sob o chuveiro." } },
+    { "@type": "Question", "name": "Tenho pele sensível. Posso usar?",
+      "acceptedAnswer": { "@type": "Answer", "text": "O Ritual Despertar da Terra foi formulado para peles sensíveis. Como são cosméticos, não substituem avaliação médica: em caso de alergia, gravidez, amamentação ou tratamento de pele, consulte um profissional antes." } },
+    { "@type": "Question", "name": "Em quanto tempo chega o pedido?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Até 3 dias úteis de preparo, mais 3 a 8 dias úteis de transporte conforme a região. Frete grátis acima de R$ 200,00." } },
+    { "@type": "Question", "name": "Posso trocar se não gostar do aroma?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Se o produto estiver lacrado, sim: são 7 dias corridos a partir do recebimento, com devolução integral. Já aberto, por higiene, não é possível trocar por preferência de aroma." } }
+  ]
 }
 </script>
 </head>
@@ -54,7 +79,13 @@
 
       <div class="container abertura__conteudo">
         <p class="etiqueta">Saboaria artesanal do Cerrado</p>
-        <p class="abertura__marca">CERRÔ</p>
+        <!-- A marca é o h1 da página: sem ele, buscador e leitor de tela não
+             sabiam sobre o que esta página é. O texto seguinte fica como
+             legenda acessível, para o título não virar só uma palavra solta. -->
+        <h1 class="abertura__marca">
+          CERRÔ
+          <span class="apenas-leitor">Banho do Cerrado: rituais de banho artesanais do Cerrado</span>
+        </h1>
         <p class="abertura__linha">Sinta a força da terra, viva o seu ritual.</p>
       </div>
 
@@ -237,6 +268,33 @@
     </div>
   </section>
 
+  <!-- ==================== TRIO DE SABONETES ====================
+       A v2 é a página principal, então a loja inteira precisa caber aqui.
+       Este é o ponto de entrada mais barato do catálogo. -->
+  <section class="secao secao--areia">
+    <div class="container duas-colunas duas-colunas--invertido aparece">
+      <div>
+        <p class="olho">Para começar</p>
+        <h2>Trio de<br>Sabonetes</h2>
+        <p class="subtitulo-ritual">Um de cada ritual</p>
+        <p>
+          Ainda não sabe qual é o seu? Leve os três sabonetes da casa, Brisa Rosada,
+          Toque de Algodão e Frescor do Amanhecer, e descubra qual essência combina
+          com a sua pele.
+        </p>
+        <p class="cartao-ritual__preco" style="font-size:2rem;margin:1.6rem 0">R$ 84,00</p>
+        <a class="btn" href="trio-de-sabonetes.html">Ver o trio</a>
+      </div>
+
+      <div class="trio-circulos" role="img"
+           aria-label="Os três sabonetes da Cerrô: Brisa Rosada, Toque de Algodão e Frescor do Amanhecer">
+        <div class="trio-circulo" style="background-image:url('assets/img/ritual-despertar-da-terra.jpg')"></div>
+        <div class="trio-circulo" style="background-image:url('assets/img/ritual-pureza-nativa.jpg')"></div>
+        <div class="trio-circulo" style="background-image:url('assets/img/ritual-sol-do-cerrado.jpg')"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ==================== ENCONTRE O SEU RITUAL ==================== -->
   <section class="secao" id="guia">
     <div class="container">
@@ -336,6 +394,39 @@
             isso que existe o Trio de Sabonetes: para conhecer as três essências antes de
             escolher um ritual inteiro.</p>
           </div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PRINCÍPIOS ====================
+       Fecha a parte de loja com o porquê da marca, antes do cadastro. -->
+  <section class="secao">
+    <div class="container">
+      <div class="centro aparece">
+        <p class="olho">O que nos move</p>
+        <h2>Rústico<br>encontra luxo</h2>
+      </div>
+      <div class="pilares aparece aparece--fila">
+        <div class="pilar">
+          <div class="pilar__icone">✦</div>
+          <h3>Feito à mão</h3>
+          <p>Produção artesanal em pequenos lotes, com atenção em cada detalhe.</p>
+        </div>
+        <div class="pilar">
+          <div class="pilar__icone">❋</div>
+          <h3>Botânica nativa</h3>
+          <p>Ativos e minerais do Cerrado, do barbatimão à argila vermelha.</p>
+        </div>
+        <div class="pilar">
+          <div class="pilar__icone">◐</div>
+          <h3>Ritual, não rotina</h3>
+          <p>Um tempo que é genuinamente seu, longe da pressa do dia.</p>
+        </div>
+        <div class="pilar">
+          <div class="pilar__icone">◈</div>
+          <h3>Alquimia olfativa</h3>
+          <p>Essências construídas em camadas, pensadas para permanecer.</p>
         </div>
       </div>
     </div>

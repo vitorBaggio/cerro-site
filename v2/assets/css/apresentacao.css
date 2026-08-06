@@ -179,6 +179,15 @@
 .abertura__conteudo .titulo-cena { color: var(--areia); }
 .abertura__conteudo .etiqueta { color: var(--dourado); justify-content: center; }
 
+/* Texto que só existe para quem usa leitor de tela ou para o buscador.
+   Fica fora da vista sem usar display:none, que o esconderia dos dois. */
+.apenas-leitor {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%);
+  white-space: nowrap; border: 0;
+}
+
 .abertura__marca {
   font-family: var(--serif);
   font-size: clamp(3.4rem, 12vw, 9rem);
