@@ -74,7 +74,22 @@
 .sem-cena .palco-meio { min-height: auto; }
 
 /* Palco escuro: tela cheia de verdade, sem cantos arredondados */
-.cena--escura .cena__palco { background: var(--preto); color: rgba(247,241,232,.72); }
+/* O palco escuro não é preto chapado: tem um foco de luz quente atrás do
+   produto e um grão finíssimo por cima. Preto liso lê como "vazio"; luz
+   direcionada mais textura lê como vitrine. */
+.cena--escura .cena__palco {
+  background:
+    radial-gradient(78% 58% at 50% 44%, rgba(199,147,85,.16), transparent 68%),
+    radial-gradient(120% 90% at 50% 120%, rgba(175,101,68,.14), transparent 62%),
+    var(--preto);
+  color: rgba(247,241,232,.72);
+}
+.cena--escura .cena__palco::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  opacity: .5; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='.22'/%3E%3C/svg%3E");
+}
+.cena--escura .cena__palco > * { position: relative; z-index: 2; }
 .cena--escura h1, .cena--escura h2, .cena--escura h3 { color: var(--areia); }
 
 /* Sem movimento (preferência do sistema): vira conteúdo empilhado normal */
@@ -95,11 +110,27 @@
   margin: 0;
 }
 
+/* A palavra em destaque recebe um degradê metálico em vez de cor chapada.
+   É o mesmo dourado da marca, só que com variação de luz dentro da letra,
+   que é o que diferencia "caro" de "colorido". */
 .titulo-cena em {
   font-style: italic;
   color: var(--barro);
+  background: linear-gradient(100deg, #8F4E2E 0%, var(--barro) 38%, #D6A268 62%, var(--barro) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-.cena--escura .titulo-cena em { color: var(--dourado); }
+.cena--escura .titulo-cena em {
+  background: linear-gradient(100deg, #B07C3E 0%, var(--dourado) 40%, #F0D8A8 62%, var(--dourado) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Se o navegador não souber recortar o fundo no texto, volta para cor sólida */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .titulo-cena em { background: none; -webkit-text-fill-color: currentColor; color: var(--barro); }
+  .cena--escura .titulo-cena em { color: var(--dourado); }
+}
 
 .legenda-cena {
   font-size: clamp(1rem, 1.6vw, 1.2rem);
@@ -283,14 +314,34 @@
   will-change: transform;
 }
 
-/* Sem borda arredondada e sem sombra de caixa aqui de propósito: o disco já
-   vem recortado em círculo na própria imagem, com a sombra embaixo, assentado
-   no mesmo tom de fundo deste ato. Qualquer moldura quadrada denunciaria o
-   recorte. Se o fundo do ato mudar de cor, as imagens precisam ser refeitas
-   (o script está em assets/img/LEIA-ME.txt). */
+/* O corte redondo é feito aqui, pelo navegador, e não gravado na imagem.
+   Antes o disco vinha recortado num JPEG com fundo escuro chapado, e quando
+   as três peças se sobrepunham no início da cena o retângulo de uma cobria a
+   outra. Com clip-path o recorte é transparente de verdade: as peças se
+   encavalam sem se apagar.
+
+   A sombra é drop-shadow, e não box-shadow, porque drop-shadow segue o
+   contorno recortado. box-shadow desenharia um quadrado atrás do círculo. */
 .abre__peca img {
   width: 100%; aspect-ratio: 1;
-  object-fit: contain;
+  object-fit: cover;
+  clip-path: circle(50% at 50% 50%);
+  filter:
+    drop-shadow(0 18px 26px rgba(0,0,0,.55))
+    drop-shadow(0 2px 5px rgba(0,0,0,.35));
+}
+
+/* Anel de luz sobre a borda do disco: dá volume e separa a peça do fundo,
+   sem depender de moldura. */
+.abre__peca::after {
+  /* só sobre a área da imagem, não sobre a legenda: por isso inset com
+     "auto" embaixo, mais aspect-ratio para fechar o quadrado do disco */
+  content: ''; position: absolute; inset: 0 0 auto 0;
+  aspect-ratio: 1; border-radius: 50%;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 1px rgba(255,244,230,.28),
+    inset 0 -10px 22px rgba(0,0,0,.26);
 }
 
 /* Empilhados no centro em p=0, abertos e retos em p=1.
