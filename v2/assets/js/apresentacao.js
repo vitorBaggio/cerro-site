@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Cerrô v2 · Peças da apresentação
    Os painéis de escolha e o fio de progresso do topo.
    ========================================================================== */
@@ -27,7 +27,7 @@
     alvo.innerHTML = CAT.rituais.map((rit) => `
       <a class="escolha__painel" href="ritual-${rit.slug}.html" data-ritual="${rit.slug}">
         <div class="escolha__figura">
-          <img src="${rit.foto}" loading="lazy"
+          <img src="${rit.foto}" width="820" height="820" loading="lazy"
                alt="Ritual ${esc(rit.nomeCurto)}: sabonete, sais e geleia de banho">
         </div>
         <div class="escolha__corpo">

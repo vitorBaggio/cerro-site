@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Cerrô · Motor da loja
    Cabeçalho, rodapé, sacola, seletor de compra e finalização de pedido.
    ========================================================================== */
@@ -230,7 +230,7 @@
           </div>
 
           <div>
-            <h4>Os Rituais</h4>
+            <h3 class="rodape__titulo">Os Rituais</h3>
             <ul>
               ${CAT.rituais.map((rit) => `
                 <li><a href="${r}ritual-${rit.slug}.html">${esc(rit.nomeCurto)}</a></li>
@@ -240,7 +240,7 @@
           </div>
 
           <div>
-            <h4>A Casa</h4>
+            <h3 class="rodape__titulo">A Casa</h3>
             <ul>
               <li><a href="${r}sobre.html">Nossa história</a></li>
               <li><a href="${r}contato.html">Contato</a></li>
@@ -252,7 +252,7 @@
           </div>
 
           <div>
-            <h4>Fale com a gente</h4>
+            <h3 class="rodape__titulo">Fale com a gente</h3>
             <ul>
               <li><a href="https://wa.me/${esc(L.whatsapp)}" target="_blank" rel="noopener">WhatsApp</a></li>
               <li><a href="mailto:${esc(L.email)}">${esc(L.email)}</a></li>
@@ -293,7 +293,7 @@
     alvo.innerHTML = CAT.rituais.map((rit) => `
       <article class="cartao-ritual" data-ritual="${rit.slug}">
         <a href="ritual-${rit.slug}.html" class="cartao-ritual__figura">
-          <img src="${rit.foto}" loading="lazy"
+          <img src="${rit.foto}" width="1100" height="1100" loading="lazy"
                alt="Ritual ${esc(rit.nomeCurto)}: sabonete, sais e geleia de banho"
                onerror="this.outerHTML='&lt;div class=&quot;sem-foto&quot; data-ritual=&quot;${rit.slug}&quot;&gt;Foto do ${esc(rit.nomeCurto)}&lt;/div&gt;'">
         </a>
@@ -581,7 +581,7 @@
         <div class="item-carrinho">
           <div class="item-carrinho__figura">
             ${i.foto
-              ? `<img src="${esc(i.foto)}" alt="" loading="lazy">`
+              ? `<img src="${esc(i.foto)}" width="1100" height="1100" alt="" loading="lazy">`
               : `<div class="sem-foto" data-ritual="${esc(i.ritualSlug || '')}"></div>`}
           </div>
           <div>

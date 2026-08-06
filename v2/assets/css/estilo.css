@@ -1094,7 +1094,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 @media (max-width: 880px) { .rodape__grade { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .rodape__grade { grid-template-columns: 1fr; } }
 
-.rodape h4 { font-family: var(--sans); font-size: .64rem; letter-spacing: .26em; text-transform: uppercase; color: var(--areia); margin-bottom: 1.4rem; font-weight: 300; }
+.rodape h4, .rodape .rodape__titulo { font-family: var(--sans); font-size: .64rem; letter-spacing: .26em; text-transform: uppercase; color: var(--areia); margin-bottom: 1.4rem; font-weight: 300; }
 .rodape ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
 .rodape a { transition: color var(--media); }
 .rodape a:hover { color: var(--dourado); }
