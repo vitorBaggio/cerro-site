@@ -33,6 +33,38 @@
   --p: 0; --p1: 0; --p2: 0; --p3: 0; --p4: 0;
 }
 
+/* --------------------------------------------------------------------------
+   Ritmo de cada ato
+
+   A altura da seção é o quanto se rola para o ato acontecer. As primeiras
+   100vh são só a seção entrando na tela; o movimento em si acontece no que
+   sobra. Um ato de três etapas com 420vh dava mais de uma tela de rolagem
+   por etapa, o que no computador é contemplativo e no celular é cansaço:
+   a página inteira pedia vinte e duas telas de polegar para passar.
+
+   O critério aqui é quanto tempo de rolagem cada etapa precisa para ser
+   lida sem pressa: cerca de 65vh no computador, 50vh no celular, onde o
+   gesto avança mais por vez e a paciência é menor. Os números saem disso.
+   -------------------------------------------------------------------------- */
+
+/* Conta: 100vh de entrada + (etapas × rolagem por etapa).
+   Computador, ~65vh por etapa.                                   */
+.cena--abertura  { --altura: 170vh; }   /* sem etapas, só respiro  */
+.cena--leque     { --altura: 230vh; }   /* 2 etapas · 65vh cada    */
+.cena--sabonetes { --altura: 230vh; }   /* 2 etapas · 65vh cada    */
+.cena--trinca    { --altura: 290vh; }   /* 3 etapas · 63vh cada    */
+.cena--ativos    { --altura: 265vh; }   /* 3 etapas · 55vh cada    */
+
+/* Celular, ~45vh por etapa. O ritmo tem que ser igual entre os atos: se um
+   corre e o outro se arrasta, a rolagem parece quebrada mesmo estando certa. */
+@media (max-width: 760px) {
+  .cena--abertura  { --altura: 145vh; }
+  .cena--leque     { --altura: 200vh; }   /* 2 etapas · 50vh cada  */
+  .cena--sabonetes { --altura: 200vh; }   /* 2 etapas · 50vh cada  */
+  .cena--trinca    { --altura: 240vh; }   /* 3 etapas · 47vh cada  */
+  .cena--ativos    { --altura: 232vh; }   /* 3 etapas · 44vh cada  */
+}
+
 .cena__palco {
   position: sticky; top: 0;
   height: var(--tela);
@@ -163,6 +195,20 @@
   transform: scale(calc(1.14 - var(--p) * 0.14));
   filter: brightness(calc(1 - var(--p) * 0.42)) blur(calc(var(--p) * 5px));
   will-change: transform, filter;
+}
+
+/* No celular, o desfoque sai. Desfocar uma foto que ocupa a tela inteira
+   é a conta mais cara desta página: o aparelho refaz a imagem toda a cada
+   quadro, e é aí que a primeira rolagem engasga. O véu por cima já escurece
+   e entrega a cena para o texto do mesmo jeito; a diferença visual é pequena
+   e a diferença no gesto é grande. Fica só a escala, que roda na placa. */
+@media (max-width: 760px) {
+  .abertura__foto {
+    filter: none;
+    transform: scale(calc(1.10 - var(--p) * 0.10));
+    will-change: transform;
+  }
+  .abertura__veu { opacity: calc(.45 + var(--p) * .55); }
 }
 
 .abertura__veu {

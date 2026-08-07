@@ -36,6 +36,13 @@
     return limitar(p * total - indice);
   }
 
+  /* Último valor escrito em cada cena. Escrever uma variável de CSS obriga o
+     navegador a reavaliar o estilo da seção inteira, e a rolagem dispara
+     eventos mesmo quando a conta dá no mesmo (parado no fim de um ato, com o
+     dedo encostado, chegando ao fim da página). Guardar o último valor e não
+     reescrever o que não mudou zera esse trabalho. */
+  const ultimo = new Map();
+
   function medir() {
     const alturaTela = window.innerHeight;
 
@@ -45,11 +52,16 @@
 
       /* Fora de vista: não gasta cálculo, mas fixa o valor da borda para o
          elemento não "voltar no tempo" quando reaparecer. */
-      if (caixa.bottom < 0) { cena.style.setProperty('--p', 1); continue; }
-      if (caixa.top > alturaTela) { cena.style.setProperty('--p', 0); continue; }
+      let p;
+      if (caixa.bottom < 0) p = 1;
+      else if (caixa.top > alturaTela) p = 0;
+      else p = percurso > 0 ? limitar(-caixa.top / percurso) : 0;
 
-      const p = percurso > 0 ? limitar(-caixa.top / percurso) : 0;
-      cena.style.setProperty('--p', p.toFixed(4));
+      const valor = p.toFixed(4);
+      if (ultimo.get(cena) === valor) continue;
+      ultimo.set(cena, valor);
+
+      cena.style.setProperty('--p', valor);
 
       const total = Number(cena.dataset.etapas || 0);
       for (let i = 0; i < total; i++) {

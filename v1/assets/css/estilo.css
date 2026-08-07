@@ -81,6 +81,13 @@ body {
     radial-gradient(1000px 800px at 40% 105%, rgba(160, 139, 111, .11), transparent 62%);
   background-attachment: fixed;
 }
+/* Fundo fixo é bonito e caro. Em tela de toque, o navegador precisa repintar
+   o fundo da página inteira a cada quadro de rolagem, e no iPhone isso trava
+   de um jeito visível. Como os halos são gradientes muito suaves e enormes,
+   deixá-los rolar junto com a página não muda nada que se perceba. */
+@media (hover: none), (max-width: 760px) {
+  body { background-attachment: scroll; }
+}
 
 /* height: auto na base é uma proteção, não enfeite. Toda tag de imagem
    declara width e height para reservar espaço e evitar salto de layout, e
