@@ -338,11 +338,31 @@
 }
 
 @media (max-width: 720px) {
-  .leque { height: min(52vh, 420px); }
-  .leque__peca { width: clamp(140px, 44vw, 220px); }
-  .leque__peca--1 { transform: translate(-50%,-50%) translateX(calc(var(--p1) * -26vw)) translateY(calc(var(--p1) * -14vh)) rotate(calc(-7deg + var(--p1) * 7deg)); }
-  .leque__peca--3 { transform: translate(-50%,-50%) translateX(calc(var(--p1) * 26vw)) translateY(calc(var(--p1) * 14vh)) rotate(calc(7deg - var(--p1) * 7deg)); }
-  .leque__nomes { display: none; }
+  /* A diagonal encolhe de 14vh para 10vh e o leque sobe. Com 14vh a peça de
+     baixo terminava em cima da primeira linha de nomes; o ato inteiro tem
+     que caber entre o topo do palco e a coluna de nomes, sem encostar. */
+  .leque { height: min(46vh, 380px); transform: translateY(-4vh); }
+  .leque__peca { width: clamp(140px, 42vw, 210px); }
+  .leque__peca--1 { transform: translate(-50%,-50%) translateX(calc(var(--p1) * -26vw)) translateY(calc(var(--p1) * -10vh)) rotate(calc(-7deg + var(--p1) * 7deg)); }
+  .leque__peca--3 { transform: translate(-50%,-50%) translateX(calc(var(--p1) * 26vw)) translateY(calc(var(--p1) * 10vh)) rotate(calc(7deg - var(--p1) * 7deg)); }
+
+  /* Os nomes estavam escondidos no celular. Três colunas não cabiam em 375px,
+     e no computador as peças abrem lado a lado, então a linha embaixo faz
+     sentido; no celular elas abrem na diagonal e a linha não se alinhava com
+     nada. Só que esconder deixava o visitante de telefone vendo três fotos
+     sem saber qual ritual é qual, justo no ato que apresenta os três.
+     A saída é virar coluna, na mesma ordem em que as peças aparecem. */
+  .leque__nomes {
+    grid-template-columns: 1fr;
+    gap: .5rem;
+    inset: auto 0 -10rem 0;
+  }
+  .leque__nome { font-size: 1.02rem; line-height: 1.35; }
+  .leque__nome span {
+    display: inline; margin-top: 0;
+    font-size: .55rem; letter-spacing: .2em;
+  }
+  .leque__nome span::before { content: ' · '; letter-spacing: 0; }
 }
 
 /* ==========================================================================

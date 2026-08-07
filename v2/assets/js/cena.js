@@ -43,12 +43,31 @@
      reescrever o que não mudou zera esse trabalho. */
   const ultimo = new Map();
 
+  /* O percurso de um ato é a altura da seção menos a altura do palco, porque
+     é exatamente esse o trecho em que o palco fica grudado na tela.
+
+     Aqui estava `window.innerHeight`, que é parecido mas não é a mesma coisa:
+     o palco tem 100dvh. No computador os dois valores batem e ninguém percebe.
+     No celular, não: `innerHeight` cresce enquanto a barra do navegador se
+     esconde durante a rolagem, e com ela mudando o percurso mudava junto, no
+     meio do ato. O resultado era o movimento acelerar sozinho na primeira
+     descida, justo onde a rolagem já parecia estranha. Medindo o palco, o
+     progresso chega a 1 no instante exato em que ele desgruda, em qualquer
+     aparelho. */
+  const palcos = new Map();
+  for (const cena of cenas) {
+    const palco = cena.querySelector('.cena__palco');
+    if (palco) palcos.set(cena, palco);
+  }
+
   function medir() {
     const alturaTela = window.innerHeight;
 
     for (const cena of cenas) {
       const caixa = cena.getBoundingClientRect();
-      const percurso = caixa.height - alturaTela;
+      const palco = palcos.get(cena);
+      const alturaPalco = palco ? palco.getBoundingClientRect().height : alturaTela;
+      const percurso = caixa.height - alturaPalco;
 
       /* Fora de vista: não gasta cálculo, mas fixa o valor da borda para o
          elemento não "voltar no tempo" quando reaparecer. */
