@@ -83,7 +83,7 @@ window.CERRO_CATALOGO = {
 
       chamada: 'Baunilha e sândalo sobre a pele seca. O ritual mais silencioso da casa, feito para acalmar e restaurar.',
 
-      historia: 'Antes do sol subir, o Cerrado é branco. Uma neblina baixa cobre o campo e tudo fica em suspensão. O Ritual Pureza Nativa foi construído sobre essa hora: baunilha e sândalo em camadas profundas, óleo de algodão, argila branca e leite de cabra. É restauração para peles secas, que precisam de hidratação intensa e de uma renovação que não machuque.',
+      historia: 'Quando a neblina baixa cobre o campo antes do amanhecer, o Cerrado desacelera e tudo entra em suspensão. Inspirado na serenidade desse momento, o Pureza Nativa combina a doçura acolhedora do Sândalo e da Baunilha com a restauração profunda do Leite de Cabra e da Argila Branca. Um ritual de puro aconchego para pausar o tempo e devolver à sua pele o equilíbrio mais essencial.',
 
       paraQuem: 'Peles secas e sensíveis, que requerem cuidado extra e hidratação intensa.',
 
