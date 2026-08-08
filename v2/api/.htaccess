@@ -1,0 +1,25 @@
+# ==========================================================================
+# Cerrô · Proteção da pasta api/
+# --------------------------------------------------------------------------
+# Só dois arquivos desta pasta devem ser abertos de fora: o que cria a
+# cobrança e o que recebe o aviso de pagamento. O resto é peça interna e
+# não tem por que responder a ninguém pela internet.
+#
+# Nenhum deles guarda segredo (o segredo mora fora de public_html), mas
+# manter a porta fechada é mais barato que descobrir depois que ela estava
+# aberta.
+# ==========================================================================
+
+<FilesMatch "^(comum|catalogo|SEGREDO-EXEMPLO)\.php$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Listagem de pasta desligada: sem isso, seusite.com.br/api/ mostra o
+# índice com o nome de todos os arquivos.
+Options -Indexes

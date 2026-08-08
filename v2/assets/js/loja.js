@@ -673,42 +673,59 @@
     window.open(url, '_blank', 'noopener');
   }
 
-  /** Modo Mercado Pago: exige o backend descrito no LEIA-ME.md. */
+  /** Modo Mercado Pago. Exige os arquivos da pasta api/ no servidor.
+   *
+   *  Repare no que este pedido NÃO leva: preço, frete e total.
+   *
+   *  A versão anterior mandava unit_price junto, e isso era um buraco de
+   *  verdade, não teoria. A sacola mora no localStorage, que é do visitante:
+   *  qualquer pessoa abre o console, troca o preço do kit para 0.01 e
+   *  finaliza. O Mercado Pago cobraria um centavo e estaria certo, porque
+   *  para ele o valor legítimo é o que o servidor da loja mandou.
+   *
+   *  Agora vai só id e quantidade. Quem sabe quanto custa é api/catalogo.php,
+   *  e ele é o único que o cliente não alcança.
+   */
   async function finalizarMercadoPago(itens) {
     const btn = $('[data-cerro="finalizar"]');
+    const rotuloOriginal = btn ? btn.textContent : '';
     if (btn) { btn.disabled = true; btn.textContent = 'Abrindo pagamento…'; }
 
     const cliente = window.CerroContas && window.CerroContas.atual();
+
+    /* Código de quem indicou a venda, quando existir. Hoje não existe: o site
+       ainda não captura o código do vendedor pela URL. O campo já viaja para
+       o servidor, então quando a lista de vendedores for definida, só falta
+       gravar essa chave. */
+    let vendedor = '';
+    try { vendedor = localStorage.getItem('cerro_vendedor') || ''; } catch (e) {}
 
     try {
       const resposta = await fetch(CFG.pagamento.mercadoPago.endpointPreferencia, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          itens: itens.map((i) => ({
-            title: `${i.nome}${i.ritual ? ' · ' + i.ritual : ''}`,
-            quantity: i.qtd,
-            unit_price: i.preco,
-            currency_id: 'BRL',
-          })),
-          frete: Sacola.frete(),
+          itens: itens.map((i) => ({ id: i.id, qtd: i.qtd })),
           cliente: cliente
             ? { nome: cliente.nome, email: cliente.email, whatsapp: cliente.whatsapp }
             : null,
+          vendedor,
         }),
       });
 
-      if (!resposta.ok) throw new Error('Falha ao criar a preferência de pagamento.');
+      const dados = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) throw new Error(dados.erro || 'Falha ao criar a cobrança.');
 
-      const dados = await resposta.json();
-      if (!dados.init_point) throw new Error('Resposta do servidor sem init_point.');
+      /* Com credencial de teste o checkout que funciona é o sandbox. Uso o
+         que vier preenchido, para o mesmo código servir nas duas fases. */
+      const destino = dados.init_point || dados.sandbox_init_point;
+      if (!destino) throw new Error('Resposta do servidor sem endereço de pagamento.');
 
-      window.location.href = dados.init_point;
+      window.location.href = destino;
     } catch (erro) {
       avisar('Não foi possível abrir o pagamento. Vamos finalizar pelo WhatsApp.');
       finalizarWhatsApp(itens);
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Finalizar pedido'; }
+      if (btn) { btn.disabled = false; btn.textContent = rotuloOriginal; }
     }
   }
 

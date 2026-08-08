@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seu pedido | Cerrô</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/estilo.css">
+</head>
+
+<body data-pagina="retorno">
+<a class="pular-para" href="#conteudo">Pular para o conteúdo</a>
+
+<header data-cerro="topo"></header>
+
+<main id="conteudo">
+  <section class="secao">
+    <div class="container-estreito centro" data-cerro="retorno">
+      <p class="olho">Um instante</p>
+      <h1 style="font-size:clamp(2.2rem,5vw,3.4rem)">Conferindo<br>seu pagamento</h1>
+    </div>
+  </section>
+</main>
+
+<footer data-cerro="rodape"></footer>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/catalogo.js"></script>
+<script src="assets/js/loja.js"></script>
+<script src="assets/js/conta.js"></script>
+
+<script>
+/* ==========================================================================
+   Página de retorno do Mercado Pago
+   --------------------------------------------------------------------------
+   O Mercado Pago traz a pessoa de volta para cá com o resultado na URL.
+
+   Uma coisa que precisa ficar clara, porque é onde lojas se enganam: o que
+   chega aqui na URL é informação do navegador, e navegador se edita. Isso
+   aqui serve para dizer à pessoa o que aconteceu, com educação. Quem
+   confirma a venda de verdade é o api/webhook.php, que pergunta direto para
+   o Mercado Pago quanto foi pago. Nenhuma decisão de negócio sai daqui.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var p = new URLSearchParams(location.search);
+  var estado = p.get('status') || p.get('collection_status') || '';
+  var referencia = p.get('external_reference') || '';
+
+  var telas = {
+    approved: {
+      olho: 'Pagamento aprovado',
+      titulo: 'Seu ritual<br>está a caminho',
+      texto: 'Recebemos a confirmação. Como cada peça é feita à mão em pequenos lotes, ' +
+             'o preparo leva até 3 dias úteis antes da postagem. Você recebe o código de ' +
+             'rastreio por WhatsApp e por e-mail assim que o pedido sair daqui.',
+      limpar: true
+    },
+    pending: {
+      olho: 'Quase lá',
+      titulo: 'Aguardando<br>a confirmação',
+      texto: 'O pagamento foi registrado e ainda está sendo processado. Boleto costuma ' +
+             'levar até 3 dias úteis para compensar; Pix e cartão são bem mais rápidos. ' +
+             'Assim que cair, começamos a preparar o seu pedido e avisamos você.',
+      limpar: true
+    },
+    in_process: null,   // mesmo caso de pending, tratado abaixo
+    rejected: {
+      olho: 'Não deu certo',
+      titulo: 'O pagamento<br>não foi aprovado',
+      texto: 'A operadora recusou a cobrança e nada foi debitado de você. Costuma ser ' +
+             'limite, algum dado digitado diferente do cadastro do cartão, ou uma trava ' +
+             'de segurança do banco. Sua sacola continua salva: dá para tentar de novo, ' +
+             'com outro cartão ou por Pix.',
+      limpar: false
+    },
+    null_: {
+      olho: 'Pedido',
+      titulo: 'Não conseguimos<br>ler o resultado',
+      texto: 'O endereço voltou sem a informação do pagamento. Se você concluiu a compra, ' +
+             'não se preocupe: o registro chega para nós de qualquer forma. Na dúvida, ' +
+             'chama no WhatsApp com o número do pedido que a gente confere na hora.',
+      limpar: false
+    }
+  };
+  telas.in_process = telas.pending;
+
+  var tela = telas[estado] || telas.null_;
+
+  /* Compra fechada, sacola vazia. Se der erro, não é motivo para quebrar a
+     página: a pessoa acabou de pagar e merece ver a confirmação. */
+  if (tela.limpar) {
+    try { window.CerroSacola && window.CerroSacola.limpar(); } catch (e) {}
+  }
+
+  var L = (window.CERRO_CONFIG && window.CERRO_CONFIG.loja) || {};
+  var zap = 'https://wa.me/' + (L.whatsapp || '');
+  if (referencia) {
+    zap += '?text=' + encodeURIComponent('Olá! Meu pedido é o ' + referencia + '.');
+  }
+
+  var alvo = document.querySelector('[data-cerro="retorno"]');
+  alvo.innerHTML =
+    '<p class="olho">' + tela.olho + '</p>' +
+    '<h1 style="font-size:clamp(2.2rem,5vw,3.4rem)">' + tela.titulo + '</h1>' +
+    '<hr class="filete">' +
+    '<p class="intro" style="margin-inline:auto">' + tela.texto + '</p>' +
+    (referencia
+      ? '<p style="margin-top:1.6rem;font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;color:var(--terra-suave)">' +
+        'Pedido ' + referencia.replace(/[<>&"]/g, '') + '</p>'
+      : '') +
+    '<div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:2.5rem">' +
+      (tela.limpar
+        ? '<a class="btn" href="index.html#rituais">Ver os rituais</a>'
+        : '<a class="btn" href="carrinho.html">Voltar para a sacola</a>') +
+      '<a class="btn btn--vazado" href="' + zap + '" target="_blank" rel="noopener">Falar no WhatsApp</a>' +
+    '</div>';
+
+  document.title = tela.olho + ' | Cerrô';
+})();
+</script>
+</body>
+</html>

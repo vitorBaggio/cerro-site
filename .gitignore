@@ -13,3 +13,23 @@ desktop.ini
 
 # Dependências, caso um dia entre alguma ferramenta
 node_modules/
+
+# ==========================================================================
+# Segredo e dados de pedido. NUNCA no repositório.
+# --------------------------------------------------------------------------
+# O cerro-secreto.php guarda o Access Token do Mercado Pago, que é a chave
+# da conta de pagamento. Ele mora fora de public_html, no servidor, e não
+# tem cópia aqui. Estas linhas existem porque um dia alguém vai copiar o
+# arquivo para a pasta do projeto "só para testar", e é aí que vaza.
+#
+# Se um token chegar a ser commitado, apagar depois não resolve: ele fica no
+# histórico do git. O certo é revogar no painel do Mercado Pago e gerar outro.
+# ==========================================================================
+cerro-secreto.php
+**/cerro-secreto.php
+*secreto*.php
+!**/SEGREDO-EXEMPLO.php
+
+# Pedidos gravados pelo webhook, contêm dados de cliente
+pedidos.jsonl
+cerro-pedidos/

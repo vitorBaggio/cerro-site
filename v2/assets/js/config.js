@@ -34,21 +34,34 @@ window.CERRO_CONFIG = {
   },
 
   /* --- Pagamento, Mercado Pago -----------------------------------------
-     O Checkout Pro do Mercado Pago exige um backend que crie a "preferência"
-     de pagamento (a chave secreta NUNCA pode ficar no site, qualquer visitante
-     conseguiria ler). Enquanto o backend não existir, o site usa o modo
-     'whatsapp': o pedido é montado e enviado como mensagem pronta.
+     Os arquivos da pasta api/ fazem a parte do servidor. Passo a passo
+     completo em PAGAMENTO.md.
 
-     Passo a passo para ativar está no arquivo LEIA-ME.md.
+     Ordem certa para ligar, sem susto:
+       1. Suba a pasta api/ e o arquivo retorno.html para o servidor.
+       2. Crie o cerro-secreto.php fora de public_html, com a credencial
+          de TESTE do Mercado Pago.
+       3. Abra seusite.com.br/api/diagnostico.php e resolva o que aparecer.
+       4. Só quando estiver tudo verde, troque o modo abaixo para
+          'mercadopago' e faça uma compra de teste do começo ao fim.
+       5. Deu certo? Troque a credencial pela de produção e apague o
+          api/diagnostico.php do servidor.
+
+     Enquanto o modo for 'whatsapp', o site funciona igual está hoje: o
+     pedido vira mensagem pronta. Nada quebra por deixar assim.
      ---------------------------------------------------------------------- */
   pagamento: {
-    // 'whatsapp'    → pedido finalizado por WhatsApp (funciona hoje, sem backend)
-    // 'mercadopago' → envia o pedido para o endpoint abaixo e redireciona ao checkout
+    // 'whatsapp'    → pedido finalizado por WhatsApp (funciona sem servidor)
+    // 'mercadopago' → cria a cobrança em api/ e leva ao checkout
     modo: 'whatsapp',
 
     mercadoPago: {
-      publicKey: 'PREENCHER: APP_USR-xxxxxxxx',   // chave PÚBLICA, pode ficar aqui
-      endpointPreferencia: '/api/criar-preferencia', // seu backend
+      endpointPreferencia: 'api/criar-preferencia.php',
+
+      /* Estes dois valores são só para mostrar na tela. Quem cobra de
+         verdade é o servidor, com o que está em api/comum.php. Se você mudar
+         aqui, mude lá também, senão o cliente vê um número na sacola e outro
+         na hora de pagar, e desiste. */
       parcelasMaximas: 6,
     },
   },
