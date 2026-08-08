@@ -312,22 +312,102 @@
   }
 
   /* ======================================================================
-     Faixa da linha que ainda vem
+     Edição de presente
+
+     Antes isto era uma faixa discreta de "em breve" dentro da seção dos
+     rituais. Virou seção própria, acima deles, e a faixa saiu junto: manter
+     as duas era anunciar a mesma linha duas vezes na mesma rolagem.
      ====================================================================== */
 
-  function montarFaixaBreve() {
-    const alvo = $('[data-cerro="breve"]');
+  function montarPresente() {
+    const alvo = $('[data-cerro="presente"]');
     if (!alvo) return;
 
-    const b = CAT.emBreve;
-    alvo.className = 'faixa-breve aparece';
+    const p = CAT.presente;
+    const temPreco = p.precoKit !== null && p.precoKit !== undefined;
+
+    /* Enquanto o preço não existe, o botão conversa em vez de vender. Melhor
+       do que mostrar "R$ 0,00" ou esconder a linha inteira até o cliente
+       decidir quanto vai cobrar. */
+    const acao = temPreco
+      ? `<a class="btn" href="ritual-florescer-eterno.html">Ver o ritual · ${dinheiro(p.precoKit)}</a>`
+      : `<a class="btn" href="ritual-florescer-eterno.html">Conhecer o ritual</a>`;
+
     alvo.innerHTML = `
-      <span class="faixa-breve__selo">Em breve</span>
-      <div>
-        <h3 class="faixa-breve__nome">${esc(b.nome.replace('Ritual ', ''))}</h3>
-        <p class="faixa-breve__texto">${esc(b.essencias)}. ${esc(b.subtitulo)}.</p>
+      <div class="presente__texto">
+        <p class="etiqueta">${esc(p.subtitulo)}</p>
+        <h2 class="titulo-cena">Florescer<br><em>Eterno</em></h2>
+        <p class="legenda-cena">${esc(p.chamada)}</p>
+        <p class="presente__essencias">${esc(p.essencias)}</p>
+        <div class="presente__acao">${acao}</div>
       </div>
-      <a class="btn btn--vazado" href="conta.html?aviso=florescer">Quero ser avisada</a>`;
+      <div class="presente__pecas">
+        ${p.produtos.map((it, i) => `
+          <figure class="presente__peca" style="--i:${i}">
+            <img width="820" height="820" src="${esc(it.foto)}" loading="lazy"
+                 alt="${esc(it.nome)}, ${esc(it.rotulo.toLowerCase())} do Ritual Florescer Eterno">
+            <figcaption>${esc(it.nome)}<span>${esc(it.rotulo)} · ${esc(it.medida)}</span></figcaption>
+          </figure>`).join('')}
+      </div>`;
+  }
+
+  /** As quatro peças em detalhe, na página do Florescer Eterno. */
+  function montarPecasPresente() {
+    const alvo = $('[data-cerro="pecas-presente"]');
+    if (!alvo) return;
+
+    const p = CAT.presente;
+    alvo.className = 'pecas-presente aparece--fila';
+    alvo.innerHTML = p.produtos.map((it) => `
+      <article class="peca-detalhe">
+        <div class="peca-detalhe__figura">
+          <img width="820" height="820" src="${esc(it.foto)}" loading="lazy"
+               alt="${esc(it.nome)}, ${esc(it.rotulo.toLowerCase())} do Ritual Florescer Eterno">
+        </div>
+        <div class="peca-detalhe__texto">
+          <p class="etiqueta">${esc(it.rotulo)} · ${esc(it.medida)}</p>
+          <h3>${esc(it.nome)}</h3>
+          <p class="peca-detalhe__ativos">${esc(it.ativos)}</p>
+          <p>${esc(it.texto)}</p>
+        </div>
+      </article>`).join('');
+  }
+
+  /** Bloco de compra do Florescer Eterno.
+   *
+   *  Enquanto os preços forem null, ele não tenta vender: mostra o que vai na
+   *  caixa e manda conversar no WhatsApp. Publicar com "R$ 0,00" ou com um
+   *  preço chutado é pior do que assumir que ainda não tem preço. */
+  function montarCompraPresente() {
+    const alvo = $('[data-cerro="compra-presente"]');
+    if (!alvo) return;
+
+    const p = CAT.presente;
+    const temPreco = p.precoKit !== null && p.precoKit !== undefined;
+
+    const lista = p.produtos.map((it) =>
+      `<li>${esc(it.nome)}<span>${esc(it.rotulo)} · ${esc(it.medida)}</span></li>`).join('');
+
+    if (temPreco) {
+      alvo.className = 'caixa-compra aparece';
+      alvo.innerHTML = `
+        <p class="caixa-compra__rotulo">Ritual completo, 4 peças</p>
+        <p class="caixa-compra__preco">${dinheiro(p.precoKit)}</p>
+        <ul class="caixa-compra__lista">${lista}</ul>
+        <button class="btn btn--largo" type="button" data-cerro="comprar-presente">Adicionar à sacola</button>`;
+      return;
+    }
+
+    const texto = encodeURIComponent(
+      'Olá! Quero saber sobre o Ritual Florescer Eterno, a edição de presente.');
+    alvo.className = 'caixa-compra aparece';
+    alvo.innerHTML = `
+      <p class="caixa-compra__rotulo">Ritual completo, 4 peças</p>
+      <p class="caixa-compra__preco caixa-compra__preco--consulta">Sob consulta</p>
+      <ul class="caixa-compra__lista">${lista}</ul>
+      <a class="btn btn--largo" href="https://wa.me/${esc(CFG.loja.whatsapp)}?text=${texto}"
+         target="_blank" rel="noopener">Falar no WhatsApp</a>
+      <p class="caixa-compra__nota">Edição de presente feita sob encomenda.</p>`;
   }
 
   /* ======================================================================
@@ -923,7 +1003,9 @@
     montarRodape();
     preencherConfig();
     montarGradeRituais();
-    montarFaixaBreve();
+    montarPresente();
+    montarPecasPresente();
+    montarCompraPresente();
     montarSeletor();
     montarCompraSimples();
     montarProdutosDetalhe();

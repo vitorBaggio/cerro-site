@@ -602,6 +602,70 @@
 .ativos-cena span em { font-style: normal; color: var(--dourado); }
 
 /* ==========================================================================
+   EDIÇÃO DE PRESENTE · Florescer Eterno
+   Texto de um lado, as quatro peças do outro. Escura, emendando no Ato 5.
+   ========================================================================== */
+
+.presente { overflow: hidden; }
+
+.presente [data-cerro="presente"] {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+}
+
+.presente__texto .titulo-cena { margin: 0 0 1.2rem; }
+.presente__texto .legenda-cena { margin: 0 0 1.6rem; max-width: 38ch; }
+
+.presente__essencias {
+  font-family: var(--serif); font-style: italic;
+  font-size: 1.05rem; color: var(--dourado);
+  margin: 0 0 2.2rem;
+}
+
+.presente__acao { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+/* As quatro peças em dois por dois. Sem cartão, sem borda, sem fundo: as
+   fotos já vêm com o próprio escuro, então sobre a seção escura elas
+   flutuam em vez de virar quadradinhos recortados. Qualquer moldura aqui
+   estragaria justamente o efeito pelo qual essas fotos foram feitas. */
+.presente__pecas {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: clamp(.5rem, 1.6vw, 1.4rem);
+}
+
+.presente__peca { margin: 0; text-align: center; }
+
+.presente__peca img {
+  width: 100%; height: auto; aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--raio-cartao);
+  transition: transform var(--lenta);
+}
+.presente__peca:hover img { transform: scale(1.04); }
+
+.presente__peca figcaption {
+  font-family: var(--serif);
+  font-size: clamp(.92rem, 1.3vw, 1.08rem);
+  color: var(--areia);
+  margin-top: .5rem; line-height: 1.35;
+}
+.presente__peca figcaption span {
+  display: block; font-family: var(--sans);
+  font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(247,241,232,.55); margin-top: .25rem;
+}
+
+@media (max-width: 860px) {
+  .presente [data-cerro="presente"] { grid-template-columns: 1fr; gap: 2.5rem; }
+  .presente__texto { text-align: center; }
+  .presente__texto .legenda-cena { margin-inline: auto; }
+  .presente__acao { justify-content: center; }
+  .presente__texto .etiqueta { justify-content: center; }
+}
+
+/* ==========================================================================
    ATO 6 · Escolha
    Três painéis grandes. Aqui a apresentação vira loja.
    ========================================================================== */

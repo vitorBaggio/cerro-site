@@ -477,34 +477,74 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 
 /* ==========================================================================
-   Faixa "em breve": o Florescer Eterno
-   Fora da grade de propósito. É uma linha que ainda não está à venda e não
-   deveria disputar atenção de igual para igual com o que já se compra hoje.
+   Página do Florescer Eterno
+   As quatro peças alternando de lado, e a caixa de compra.
    ========================================================================== */
 
-.faixa-breve {
-  display: grid; grid-template-columns: auto 1fr auto;
-  gap: clamp(1.25rem, 3vw, 2.5rem); align-items: center;
-  margin-top: var(--gap);
-  padding: 1.6rem clamp(1.5rem, 3vw, 2.4rem);
+.pecas-presente { display: grid; gap: clamp(2rem, 4vw, 3.5rem); }
+
+.peca-detalhe {
+  display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: clamp(1.4rem, 3vw, 3rem);
+  align-items: center;
+}
+
+/* Alterna o lado da foto. Quatro blocos iguais empilhados viram lista de
+   supermercado; alternando, o olho tem para onde ir. */
+.peca-detalhe:nth-child(even) .peca-detalhe__figura { order: 2; }
+
+.peca-detalhe__figura img {
+  width: 100%; height: auto; aspect-ratio: 1;
+  object-fit: cover; border-radius: var(--raio-cartao);
+}
+
+.peca-detalhe__texto h3 {
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  margin: .2rem 0 .4rem;
+}
+.peca-detalhe__ativos {
+  font-family: var(--serif); font-style: italic;
+  color: var(--dourado); margin: 0 0 .9rem;
+}
+.peca-detalhe__texto p:last-child { margin: 0; max-width: 52ch; }
+
+@media (max-width: 720px) {
+  .peca-detalhe { grid-template-columns: 1fr; gap: 1.1rem; }
+  .peca-detalhe:nth-child(even) .peca-detalhe__figura { order: 0; }
+  .peca-detalhe__figura { max-width: 280px; margin-inline: auto; }
+  .peca-detalhe__texto { text-align: center; }
+  .peca-detalhe__texto p:last-child { margin-inline: auto; }
+  .peca-detalhe__texto .etiqueta { justify-content: center; }
+}
+
+.caixa-compra {
+  border: 1px solid var(--linha); border-radius: var(--raio-cartao);
+  padding: clamp(1.6rem, 3vw, 2.4rem);
   background: var(--papel);
-  border: 1px solid var(--linha);
-  border-radius: var(--raio-cartao);
-  transition: border-color var(--lenta);
 }
-.faixa-breve:hover { border-color: rgba(175,101,68,.42); }
-
-.faixa-breve__selo {
-  font-size: .58rem; letter-spacing: .26em; text-transform: uppercase;
-  color: var(--areia); background: var(--carvao);
-  border-radius: 999px; padding: .5rem 1.05rem; white-space: nowrap;
+.caixa-compra__rotulo {
+  font-size: .66rem; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--terra-suave); margin: 0;
 }
-.faixa-breve__nome { font-family: var(--serif); font-size: 1.35rem; margin: 0; }
-.faixa-breve__texto { font-size: .88rem; color: var(--terra-suave); margin: .2rem 0 0; }
+.caixa-compra__preco {
+  font-family: var(--serif); font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 300; color: var(--terra); margin: .3rem 0 1.4rem;
+}
+.caixa-compra__preco--consulta { font-style: italic; color: var(--barro); }
 
-@media (max-width: 760px) {
-  .faixa-breve { grid-template-columns: 1fr; text-align: center; gap: 1.1rem; }
-  .faixa-breve__selo { justify-self: center; }
+.caixa-compra__lista { list-style: none; margin: 0 0 1.8rem; padding: 0; }
+.caixa-compra__lista li {
+  font-family: var(--serif); font-size: 1.05rem;
+  padding: .7rem 0; border-top: 1px solid var(--linha);
+}
+.caixa-compra__lista li span {
+  display: block; font-family: var(--sans);
+  font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--terra-suave); margin-top: .2rem;
+}
+.caixa-compra__nota {
+  font-size: .8rem; color: var(--terra-suave);
+  text-align: center; margin: .9rem 0 0;
 }
 
 /* ==========================================================================

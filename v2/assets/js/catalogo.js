@@ -193,12 +193,88 @@ window.CERRO_CATALOGO = {
     itens: ['Brisa Rosada, com romã, pitanga e hibisco', 'Toque de Algodão, com baunilha e sândalo', 'Frescor do Amanhecer, com copaíba e capim-limão'],
   },
 
-  /* --- Linha em breve ---------------------------------------------------- */
-  emBreve: {
+  /* --- Edição de presente -------------------------------------------------
+     Esta linha fica FORA da trinca, e isso é proposital. O site inteiro se
+     apoia em "são três": três rituais, três peças cada, três forças. O
+     Florescer Eterno tem quatro peças, não tem sais de banho, e é vendido
+     como presente. Tratá-lo como um quarto ritual quebraria a conta que a
+     apresentação faz do começo ao fim.
+
+     Sobre os textos: o material de formulação que veio do cliente trazia
+     promessas de tratamento (neutralizar manchas, aliviar coceiras,
+     estimular colágeno, fechar poros). Cosmético no Brasil pode limpar,
+     perfumar, proteger e manter em bom estado; tratar é medicamento. Os
+     textos abaixo mantêm o benefício sensorial, que é o que vende, sem a
+     promessa que não pode ser feita.
+
+     PREÇOS: ainda não definidos pelo cliente. Enquanto forem null, o site
+     mostra "consultar" e manda para o WhatsApp em vez do carrinho. Preencha
+     os cinco números e a linha passa a vender sozinha. Lembre de preencher
+     também em api/catalogo.php, que é quem cobra de verdade.
+     ---------------------------------------------------------------------- */
+  presente: {
     slug: 'florescer-eterno',
     nome: 'Ritual Florescer Eterno',
-    subtitulo: 'A linha-presente',
+    nomeCurto: 'Florescer Eterno',
+    subtitulo: 'Edição de presente',
     essencias: 'Rosas Brancas, Chá Branco e Lichia',
-    texto: 'Quatro peças pensadas para datas que merecem ser lembradas. Um ritual de revitalização para peles maduras, com pó de pérola, cristais de quartzo e extrato de rosas brancas. Em breve.',
+    cor: '#C58A72',
+    foto: 'assets/img/florescer-coracao.jpg',
+
+    chamada: 'Quatro peças que chegam prontas para entregar. A única linha da casa que não segue a trinca, porque presente não se divide em três.',
+
+    historia: 'Nem todo banho é rotina. Alguns são data marcada. O Florescer Eterno nasceu para esses: rosas brancas, chá branco e lichia numa mesma alquimia, em quatro peças pensadas para serem dadas de presente. É a linha em que a Cerrô se permite o gesto, não só o cuidado.',
+
+    paraQuem: 'Quem vai presentear e quer entregar algo que já chega pronto, sem precisar montar nada.',
+
+    precoKit: null,          // PREENCHER: preço do conjunto completo
+    medida: '4 peças',
+
+    produtos: [
+      {
+        id: 'florescer-coracao',
+        tipo: 'sabonete',
+        rotulo: 'Sabonete em barra',
+        nome: 'Coração Entrelaçado',
+        medida: '120 g',
+        preco: null,         // PREENCHER
+        foto: 'assets/img/florescer-coracao.jpg',
+        ativos: 'Extrato de rosas brancas',
+        texto: 'A maior barra da casa, 120 g, feita para durar o banho inteiro na mão. O extrato de rosas brancas limpa sem repuxar e deixa aquele toque macio que fica depois de enxaguar. O relevo quadriculado não é só enfeite: ele segura a espuma e dá pegada na barra molhada.',
+      },
+      {
+        id: 'florescer-mil-flores',
+        tipo: 'sabonete',
+        rotulo: 'Sabonete em barra',
+        nome: 'Mil Flores',
+        medida: '80 g',
+        preco: null,         // PREENCHER
+        foto: 'assets/img/florescer-mil-flores.jpg',
+        ativos: 'Extrato de aveia',
+        texto: 'A aveia é o ingrediente mais antigo que existe para banho de pele sensível, e continua sendo o melhor. Numa barra de 80 g com três flores em relevo, ela deixa a pele com um toque aveludado que já se sente antes de sair do chuveiro.',
+      },
+      {
+        id: 'florescer-esfoliante',
+        tipo: 'esfoliante',
+        rotulo: 'Esfoliante corporal',
+        nome: 'Cristais Mágicos',
+        medida: '200 g',
+        preco: null,         // PREENCHER
+        foto: 'assets/img/florescer-esfoliante.jpg',
+        ativos: 'Óleo de amêndoas e cristais de quartzo',
+        texto: 'Cristais de quartzo moído fazem a esfoliação, removendo as células mortas da superfície. O óleo de amêndoas entra junto para a pele não sair ressecada, que é o que costuma acontecer com esfoliante. Sai a aspereza e fica o brilho.',
+      },
+      {
+        id: 'florescer-geleia',
+        tipo: 'geleia',
+        rotulo: 'Geleia de banho',
+        nome: 'Chuva de Brilho',
+        medida: '200 ml',
+        preco: null,         // PREENCHER
+        foto: 'assets/img/florescer-geleia.jpg',
+        ativos: 'Extrato de aveia e pó de pérola',
+        texto: 'O pó de pérola faz o que o nome promete: deixa um brilho fino na pele, do tipo que só aparece quando a luz bate de lado. A aveia entra para o banho não ressecar. É a peça que fecha o ritual e a que mais dura.',
+      },
+    ],
   },
 };
