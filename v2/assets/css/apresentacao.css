@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Cerrô v2 · Apresentação
    --------------------------------------------------------------------------
    Folha que roda por cima de estilo.css, só na home. A gramática é a das
@@ -610,13 +610,26 @@
 
 .presente [data-cerro="presente"] {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
-  gap: clamp(2rem, 5vw, 4.5rem);
-  align-items: center;
+  gap: clamp(1.5rem, 3.5vw, 3rem);
+  justify-items: center;
+  text-align: center;
 }
 
-.presente__texto .titulo-cena { margin: 0 0 1.2rem; }
-.presente__texto .legenda-cena { margin: 0 0 1.6rem; max-width: 38ch; }
+/* A imagem do conjunto tem exatamente o mesmo preto do fundo da seção, então
+   não leva moldura, borda, sombra nem canto arredondado. Qualquer uma dessas
+   coisas desenharia um retângulo onde não deve existir retângulo: o efeito
+   pretendido é as quatro peças aparecerem flutuando na própria seção. */
+.presente__conjunto {
+  margin: 0;
+  width: min(100%, 1240px);
+}
+.presente__conjunto img { width: 100%; height: auto; display: block; }
+
+.presente__texto .titulo-cena { margin: 0 0 1rem; }
+.presente__texto .legenda-cena {
+  margin: 0 auto 1.4rem;
+  max-width: 46ch;
+}
 
 .presente__essencias {
   font-family: var(--serif); font-style: italic;
@@ -624,60 +637,11 @@
   margin: 0 0 2.2rem;
 }
 
-.presente__acao { display: flex; flex-wrap: wrap; gap: 1rem; }
-
-/* As quatro peças em dois por dois. Sem cartão, sem borda, sem fundo: as
-   fotos já vêm com o próprio escuro, então sobre a seção escura elas
-   flutuam em vez de virar quadradinhos recortados. Qualquer moldura aqui
-   estragaria justamente o efeito pelo qual essas fotos foram feitas. */
-.presente__pecas {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: clamp(.5rem, 1.6vw, 1.4rem);
-}
-
-.presente__peca { margin: 0; text-align: center; }
-
-/* Provisório, até entrar a imagem única do conjunto.
-
-   A ideia original era a foto flutuar no escuro da seção. Só que flutuar
-   exige que o fundo da foto seja IGUAL ao da seção. Medido: a seção é
-   rgb(42,30,24) e o fundo das fotos rgb(23,2,1). Contraste de 1,24, que é
-   o pior lugar possível: dá para ver a borda do retângulo, mas ela não
-   parece escolhida. O resultado é mancha, não foto.
-
-   Como as fotos são mais escuras que a seção, um fio quente na borda
-   resolve o sintoma: o retângulo passa a ler como moldura de propósito. */
-.presente__peca img {
-  width: 100%; height: auto; aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: var(--raio-cartao);
-  border: 1px solid rgba(199, 147, 85, .42);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
-  transition: transform var(--lenta), border-color var(--lenta);
-}
-.presente__peca:hover img {
-  transform: scale(1.04);
-  border-color: rgba(199, 147, 85, .5);
-}
-
-.presente__peca figcaption {
-  font-family: var(--serif);
-  font-size: clamp(.92rem, 1.3vw, 1.08rem);
-  color: var(--areia);
-  margin-top: .5rem; line-height: 1.35;
-}
-.presente__peca figcaption span {
-  display: block; font-family: var(--sans);
-  font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
-  color: rgba(247,241,232,.55); margin-top: .25rem;
-}
+.presente__acao { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+.presente__texto .etiqueta { justify-content: center; }
 
 @media (max-width: 860px) {
-  .presente [data-cerro="presente"] { grid-template-columns: 1fr; gap: 2.5rem; }
-  .presente__texto { text-align: center; }
-  .presente__texto .legenda-cena { margin-inline: auto; }
-  .presente__acao { justify-content: center; }
-  .presente__texto .etiqueta { justify-content: center; }
+  .presente__texto .legenda-cena { max-width: 34ch; }
 }
 
 /* ==========================================================================

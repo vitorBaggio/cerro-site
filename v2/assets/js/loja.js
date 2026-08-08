@@ -333,21 +333,33 @@
       ? `<a class="btn" href="ritual-florescer-eterno.html">Ver o ritual · ${dinheiro(p.precoKit)}</a>`
       : `<a class="btn" href="ritual-florescer-eterno.html">Conhecer o ritual</a>`;
 
+    /* Imagem primeiro, texto embaixo.
+
+       A versão anterior era um mosaico de quatro fotos ao lado do texto, e
+       não funcionou: as fotos têm fundo quase preto e a seção também, com
+       contraste de 1,24 entre eles. Quatro quadrados boiando na mesma cor
+       leem como mancha, não como produto.
+
+       Agora é uma imagem só, montada a partir das mesmas quatro fotos com
+       base comum e fundo igualado. Como o fundo dela é o mesmo da seção, a
+       imagem não tem borda: ela se dissolve na seção e o que sobra na tela
+       são as quatro peças alinhadas, sem moldura nenhuma. É o contrário do
+       problema anterior, usando a mesma propriedade que o causou. */
     alvo.innerHTML = `
+      <figure class="presente__conjunto">
+        <picture>
+          <source media="(max-width: 700px)" srcset="assets/img/florescer-conjunto-movel.jpg">
+          <img width="1800" height="620" src="assets/img/florescer-conjunto.jpg" loading="lazy"
+               alt="As quatro peças do Ritual Florescer Eterno: sabonete Coração Entrelaçado, esfoliante corporal Cristais Mágicos, geleia de banho Chuva de Brilho e sabonete Mil Flores">
+        </picture>
+      </figure>
+
       <div class="presente__texto">
         <p class="etiqueta">${esc(p.subtitulo)}</p>
-        <h2 class="titulo-cena">Florescer<br><em>Eterno</em></h2>
+        <h2 class="titulo-cena">Florescer <em>Eterno</em></h2>
         <p class="legenda-cena">${esc(p.chamada)}</p>
         <p class="presente__essencias">${esc(p.essencias)}</p>
         <div class="presente__acao">${acao}</div>
-      </div>
-      <div class="presente__pecas">
-        ${p.produtos.map((it, i) => `
-          <figure class="presente__peca" style="--i:${i}">
-            <img width="820" height="820" src="${esc(it.foto)}" loading="lazy"
-                 alt="${esc(it.nome)}, ${esc(it.rotulo.toLowerCase())} do Ritual Florescer Eterno">
-            <figcaption>${esc(it.nome)}<span>${esc(it.rotulo)} · ${esc(it.medida)}</span></figcaption>
-          </figure>`).join('')}
       </div>`;
   }
 
