@@ -637,13 +637,28 @@
 
 .presente__peca { margin: 0; text-align: center; }
 
+/* Provisório, até entrar a imagem única do conjunto.
+
+   A ideia original era a foto flutuar no escuro da seção. Só que flutuar
+   exige que o fundo da foto seja IGUAL ao da seção. Medido: a seção é
+   rgb(42,30,24) e o fundo das fotos rgb(23,2,1). Contraste de 1,24, que é
+   o pior lugar possível: dá para ver a borda do retângulo, mas ela não
+   parece escolhida. O resultado é mancha, não foto.
+
+   Como as fotos são mais escuras que a seção, um fio quente na borda
+   resolve o sintoma: o retângulo passa a ler como moldura de propósito. */
 .presente__peca img {
   width: 100%; height: auto; aspect-ratio: 1;
   object-fit: cover;
   border-radius: var(--raio-cartao);
-  transition: transform var(--lenta);
+  border: 1px solid rgba(199, 147, 85, .42);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+  transition: transform var(--lenta), border-color var(--lenta);
 }
-.presente__peca:hover img { transform: scale(1.04); }
+.presente__peca:hover img {
+  transform: scale(1.04);
+  border-color: rgba(199, 147, 85, .5);
+}
 
 .presente__peca figcaption {
   font-family: var(--serif);
