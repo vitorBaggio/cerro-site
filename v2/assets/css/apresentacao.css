@@ -623,7 +623,23 @@
   margin: 0;
   width: min(100%, 1240px);
 }
-.presente__conjunto img { width: 100%; height: auto; display: block; }
+/* A proporção também vai no CSS, e não só nos atributos da tag.
+
+   Nem todo navegador usa width/height de um <source> para reservar espaço;
+   aspect-ratio funciona em todos. Como as duas regras nascem do mesmo par de
+   arquivos, elas não podem divergir: mexeu no tamanho de um, mexe aqui.
+
+   As 700px têm que ser exatamente as mesmas do media da <source>. Se as duas
+   se desencontrarem, existe uma faixa de largura em que o navegador carrega
+   uma proporção e reserva a outra, que é justamente o defeito que isto
+   corrige. */
+.presente__conjunto img {
+  width: 100%; height: auto; display: block;
+  aspect-ratio: 1800 / 620;
+}
+@media (max-width: 700px) {
+  .presente__conjunto img { aspect-ratio: 1 / 1; }
+}
 
 .presente__texto .titulo-cena { margin: 0 0 1rem; }
 .presente__texto .legenda-cena {

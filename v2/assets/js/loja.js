@@ -348,7 +348,19 @@
     alvo.innerHTML = `
       <figure class="presente__conjunto">
         <picture>
-          <source media="(max-width: 700px)" srcset="assets/img/florescer-conjunto-movel.jpg">
+          <!-- A largura e a altura vão TAMBÉM na fonte, e não só na img.
+
+               Sem elas, o navegador reserva espaço usando os atributos da
+               <img>, que descrevem a versão de computador, 2,9:1. No celular
+               quem carrega é esta fonte, que é 1:1. Medido: reservava 115px
+               e chegava com 334px, empurrando tudo abaixo em 219px no
+               instante em que a imagem terminava de carregar.
+
+               Isso fazia a página saltar no meio da rolagem e obrigava os
+               atos grudados a recalcular a geometria sobre um documento que
+               tinha se movido. Era essa a travada seguida de pulo. -->
+          <source media="(max-width: 700px)" width="1100" height="1100"
+                  srcset="assets/img/florescer-conjunto-movel.jpg">
           <img width="1800" height="620" src="assets/img/florescer-conjunto.jpg" loading="lazy"
                alt="As quatro peças do Ritual Florescer Eterno: sabonete Coração Entrelaçado, esfoliante corporal Cristais Mágicos, geleia de banho Chuva de Brilho e sabonete Mil Flores">
         </picture>
