@@ -227,7 +227,7 @@ window.CERRO_CATALOGO = {
 
     paraQuem: 'Quem vai presentear e quer entregar algo que já chega pronto, sem precisar montar nada.',
 
-    precoKit: null,          // PREENCHER: preço do conjunto completo
+    precoKit: 220.00,        // informado pelo cliente
     medida: '4 peças',
 
     produtos: [

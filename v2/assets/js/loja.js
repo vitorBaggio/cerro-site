@@ -581,6 +581,23 @@
         <p class="caixa-compra__preco">${dinheiro(p.precoKit)}</p>
         <ul class="caixa-compra__lista">${lista}</ul>
         <button class="btn btn--largo" type="button" data-cerro="comprar-presente">Adicionar à sacola</button>`;
+
+      /* O id tem que ser o mesmo de api/catalogo.php, senão o servidor
+         recusa o pedido com "produto não encontrado" na hora de pagar. */
+      alvo.addEventListener('click', (ev) => {
+        if (!ev.target.closest('[data-cerro="comprar-presente"]')) return;
+        Sacola.adicionar({
+          id: p.slug + '-kit',
+          nome: 'Ritual completo',
+          ritual: p.nomeCurto,
+          ritualSlug: p.slug,
+          detalhe: 'Edição de presente, 4 peças',
+          preco: p.precoKit,
+          foto: p.foto,
+          qtd: 1,
+        });
+        avisar('Ritual Florescer Eterno adicionado à sacola');
+      });
       return;
     }
 

@@ -37,6 +37,13 @@ return array(
   'pureza-nativa-kit'      => array('nome' => 'Ritual Pureza Nativa completo, 3 peças',      'preco' => 120.00),
   'sol-do-cerrado-kit'     => array('nome' => 'Ritual Sol do Cerrado completo, 3 peças',     'preco' => 120.00),
 
+  /* --- Edição de presente ------------------------------------------------
+     Fora da trinca. Quatro peças, vendido como conjunto. Os preços das peças
+     avulsas ainda não foram definidos: enquanto não estiverem aqui, elas não
+     podem ser vendidas separadas, e é assim que tem que ser. Produto sem
+     preço no servidor é produto que não existe. */
+  'florescer-eterno-kit' => array('nome' => 'Ritual Florescer Eterno completo, 4 peças', 'preco' => 220.00),
+
   /* --- Combos ----------------------------------------------------------- */
   'trio-sabonetes'     => array('nome' => 'Trio de Sabonetes, um de cada ritual',            'preco' => 84.00),
 );
