@@ -44,10 +44,10 @@ window.CERRO_CONFIG = {
      comprimento × largura × altura ÷ 6000.
 
      Na caixa de 28 × 22 × 10, isso dá 6160 cm³, ou seja 1,027 kg de peso
-     cubado. O kit pesa 640 g de verdade. Então o frete é cobrado como se
-     ele pesasse 1,03 kg: 60% a mais, e quem paga essa diferença é a loja
-     em cada venda. O que encarece aqui não é o produto, é o ar dentro da
-     caixa.
+     cubado. O kit pesa 730 g de verdade, já com os 100 g da caixa. Então o
+     frete é cobrado como se ele pesasse 1,03 kg: 41% a mais, e quem paga
+     essa diferença é a loja em cada venda. O que encarece aqui não é o
+     produto, é o ar dentro da caixa.
 
      Isso pesa ainda mais numa venda de peça avulsa: um sabonete de R$ 28
      dentro dessa mesma caixa é cobrado como 1,03 kg igual ao kit inteiro.
@@ -56,13 +56,13 @@ window.CERRO_CONFIG = {
   envio: {
     cepOrigem: '78074-170',        // Cuiabá, MT
 
-    caixaPadrao: { comprimento: 28, largura: 22, altura: 10, pesoDaCaixa: 10 },  // cm e gramas
+    caixaPadrao: { comprimento: 28, largura: 22, altura: 10, pesoDaCaixa: 100 },  // cm e gramas
     caixaMenor:  null,             // PREENCHER se houver caixa para peça avulsa
 
     /* Peso em gramas, JÁ COM a caixa. */
     pesos: {
-      kitRitual:    640,           // 630 g de produto + 10 g de caixa
-      kitFlorescer: 610,           // 600 g de produto + 10 g de caixa
+      kitRitual:    730,           // 630 g de produto + 100 g de caixa
+      kitFlorescer: 700,           // 600 g de produto + 100 g de caixa
 
       sabonete:  'PREENCHER',      // peça avulsa
       sais:      'PREENCHER',
