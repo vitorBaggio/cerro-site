@@ -77,8 +77,28 @@ foreach ($dados['itens'] as $pedido) {
 $codigoCupom = isset($dados['cupom']) ? substr(preg_replace('/[^A-Za-z0-9_-]/', '', (string) $dados['cupom']), 0, 24) : '';
 $desconto = cerro_desconto($codigoCupom, $subtotal);
 
-/* --- Frete, também calculado aqui ------------------------------------- */
+/* --- Frete -------------------------------------------------------------
+   O navegador manda o PROTOCOLO da cotação e o serviço escolhido, nunca o
+   valor. O servidor lê a cotação que ele mesmo guardou em api/frete.php.
+
+   Sem protocolo (cliente que fechou sem informar CEP, ou cotação vencida),
+   cai no valor fixo, que é o comportamento antigo e continua correto. */
 $frete = (float) $CERRO_LOJA['frete_valor'];
+$freteServico = '';
+$freteCep = '';
+
+$protocolo = isset($dados['freteProtocolo']) ? (string) $dados['freteProtocolo'] : '';
+$servico   = isset($dados['freteServico'])   ? substr(preg_replace('/[^A-Za-z0-9 ]/', '', (string) $dados['freteServico']), 0, 40) : '';
+
+if ($protocolo && $servico) {
+  $cot = cerro_ler_cotacao($protocolo, $servico);
+  if ($cot) {
+    $frete        = (float) $cot['preco'];
+    $freteServico = $cot['servico'];
+    $freteCep     = $cot['cep'];
+  }
+}
+
 $limite = $CERRO_LOJA['frete_gratis_acima'];
 if ($limite !== null && $subtotal >= (float) $limite) $frete = 0.0;
 
@@ -124,6 +144,8 @@ $preferencia = array(
     'whatsapp'  => isset($cliente['whatsapp']) ? preg_replace('/\D/', '', (string) $cliente['whatsapp']) : '',
     'subtotal'  => round($subtotal, 2),
     'frete'     => round($frete, 2),
+    'frete_servico' => $freteServico,
+    'frete_cep'     => $freteCep,
   ),
 );
 
@@ -171,6 +193,8 @@ cerro_registrar(array(
   'desconto'   => round($desconto, 2),
   'cupom'      => $desconto > 0 ? strtoupper($codigoCupom) : '',
   'frete'      => round($frete, 2),
+  'frete_servico' => $freteServico,
+  'frete_cep'  => $freteCep,
   'total'      => $total,
   'cliente'    => $comprador,
   'vendedor'   => $vendedor,

@@ -59,6 +59,13 @@ return array(
      ---------------------------------------------------------------------- */
   'webhook_secret' => '',
 
+  /* --- Token do SuperFrete (opcional) ------------------------------------
+     Sem ele a loja cobra pela tabela por região de api/comum.php, que
+     funciona e nunca cai. Com ele, cotação real dos Correios por CEP.
+     Crie em superfrete.com, painel, Integrações, Token.
+     ---------------------------------------------------------------------- */
+  'frete_token' => '',
+
   /* --- Para onde avisar quando cair um pedido ---------------------------
      Deixe string vazia para não enviar e-mail.
      ---------------------------------------------------------------------- */

@@ -187,3 +187,131 @@ function cerro_registrar($linha) {
   );
   return $ok !== false;
 }
+
+/* ==========================================================================
+   Envio: caixa, regiões e cotação
+   ========================================================================== */
+
+$CERRO_ENVIO = array(
+  'cep_origem'      => '78074-170',   // Cuiabá, MT
+  'caixa'           => array('c' => 28, 'l' => 22, 'a' => 10),  // cm
+  'peso_caixa_g'    => 730,           // kit mais pesado, já com a embalagem
+  'pecas_por_caixa' => 4,
+  'validade_min'    => 30,            // minutos que a cotação vale
+
+  /* Tabela por região, saindo de Cuiabá. São valores POR CAIXA.
+     PREENCHER com a tabela real do cliente: estes são um ponto de partida
+     plausível, não uma cotação. Enquanto não houver token do intermediário,
+     é esta tabela que a loja cobra. */
+  'regioes' => array(
+    'MT'      => array('nome' => 'Mato Grosso',  'pac' => 21.90, 'sedex' => 34.90, 'prazo_pac' => '2 a 4', 'prazo_sedex' => '1 a 2'),
+    'CO'      => array('nome' => 'Centro-Oeste', 'pac' => 26.90, 'sedex' => 42.90, 'prazo_pac' => '3 a 6', 'prazo_sedex' => '2 a 3'),
+    'SE'      => array('nome' => 'Sudeste',      'pac' => 29.90, 'sedex' => 49.90, 'prazo_pac' => '4 a 8', 'prazo_sedex' => '2 a 4'),
+    'S'       => array('nome' => 'Sul',          'pac' => 32.90, 'sedex' => 54.90, 'prazo_pac' => '5 a 9', 'prazo_sedex' => '3 a 5'),
+    'NE'      => array('nome' => 'Nordeste',     'pac' => 36.90, 'sedex' => 62.90, 'prazo_pac' => '6 a 12','prazo_sedex' => '3 a 6'),
+    'N'       => array('nome' => 'Norte',        'pac' => 39.90, 'sedex' => 69.90, 'prazo_pac' => '7 a 14','prazo_sedex' => '4 a 7'),
+  ),
+);
+
+/** Região a partir do CEP, pelas faixas dos Correios por estado. */
+function cerro_regiao($cep) {
+  $n = (int) substr($cep, 0, 5);
+  if ($n >= 78000 && $n <= 78899) return 'MT';
+  if ($n >= 1000  && $n <= 39999) return 'SE';   // SP, RJ, ES, MG
+  if ($n >= 40000 && $n <= 65999) return 'NE';   // BA até MA
+  if ($n >= 66000 && $n <= 69999) return 'N';    // PA, AP, AM, RR, AC
+  if ($n >= 70000 && $n <= 76799) return 'CO';   // DF e GO
+  if ($n >= 76800 && $n <= 76999) return 'N';    // RO
+  if ($n >= 77000 && $n <= 77999) return 'N';    // TO
+  if ($n >= 79000 && $n <= 79999) return 'CO';   // MS
+  if ($n >= 80000 && $n <= 89999) return 'S';    // PR e SC
+  if ($n >= 90000 && $n <= 99999) return 'S';    // RS
+  return 'SE';
+}
+
+/** Cotação pela tabela. Sempre funciona, não depende de ninguém. */
+function cerro_cotar_por_regiao($cep, $caixas) {
+  global $CERRO_ENVIO;
+  $r = $CERRO_ENVIO['regioes'][cerro_regiao($cep)];
+  return array(
+    array('servico' => 'PAC',   'nome' => 'PAC',   'preco' => round($r['pac']   * $caixas, 2), 'prazo' => $r['prazo_pac']   . ' dias úteis'),
+    array('servico' => 'SEDEX', 'nome' => 'SEDEX', 'preco' => round($r['sedex'] * $caixas, 2), 'prazo' => $r['prazo_sedex'] . ' dias úteis'),
+  );
+}
+
+/** Cotação real, via SuperFrete. Devolve array vazio em qualquer falha, e
+ *  quem chamou cai na tabela: a loja nunca para de vender porque uma API
+ *  de terceiro está fora do ar. */
+function cerro_cotar_intermediario($token, $cep, $caixas) {
+  global $CERRO_ENVIO;
+  $c = $CERRO_ENVIO['caixa'];
+  $corpo = array(
+    'from' => array('postal_code' => preg_replace('/\D/', '', $CERRO_ENVIO['cep_origem'])),
+    'to'   => array('postal_code' => $cep),
+    'package' => array(
+      'height' => $c['a'], 'width' => $c['l'], 'length' => $c['c'],
+      'weight' => $CERRO_ENVIO['peso_caixa_g'] / 1000.0,
+    ),
+  );
+  $r = cerro_http('POST', 'https://api.superfrete.com/api/v0/calculator', $token, $corpo);
+  if ($r['status'] < 200 || $r['status'] >= 300 || !is_array($r['corpo'])) {
+    error_log('Cerro/frete: cotacao falhou, status ' . $r['status']);
+    return array();
+  }
+  $saida = array();
+  foreach ($r['corpo'] as $op) {
+    if (!empty($op['error']) || empty($op['price'])) continue;
+    $saida[] = array(
+      'servico' => isset($op['name']) ? $op['name'] : 'Envio',
+      'nome'    => isset($op['name']) ? $op['name'] : 'Envio',
+      'preco'   => round((float) $op['price'] * $caixas, 2),
+      'prazo'   => (isset($op['delivery_time']) ? $op['delivery_time'] : '?') . ' dias úteis',
+    );
+  }
+  return $saida;
+}
+
+/* --------------------------------------------------------------------------
+   Guarda e leitura da cotação
+
+   Arquivo simples numa pasta fora de public_html. Não é banco de dados, e
+   não precisa ser: são registros de trinta minutos, um por sacola.
+   -------------------------------------------------------------------------- */
+function cerro_pasta_cotacoes() {
+  $seg = cerro_segredo();
+  $base = ($seg && !empty($seg['pasta_pedidos'])) ? $seg['pasta_pedidos'] : sys_get_temp_dir();
+  $p = rtrim($base, '/') . '/cotacoes';
+  if (!is_dir($p)) @mkdir($p, 0700, true);
+  return $p;
+}
+
+function cerro_guardar_cotacao($protocolo, $dados) {
+  $p = cerro_pasta_cotacoes();
+  if (!is_dir($p) || !is_writable($p)) return false;
+
+  /* Limpa o que venceu, para a pasta não crescer para sempre. */
+  foreach (glob($p . '/*.json') as $velho) {
+    if (filemtime($velho) < time() - 3600) @unlink($velho);
+  }
+  return @file_put_contents($p . '/' . $protocolo . '.json', json_encode($dados)) !== false;
+}
+
+/** Devolve a opção escolhida, ou null se o protocolo não existe, venceu, ou
+ *  o serviço pedido não estava entre os que foram oferecidos. */
+function cerro_ler_cotacao($protocolo, $servico) {
+  global $CERRO_ENVIO;
+  $protocolo = preg_replace('/[^A-Za-z0-9_-]/', '', (string) $protocolo);
+  if (!$protocolo) return null;
+
+  $arq = cerro_pasta_cotacoes() . '/' . $protocolo . '.json';
+  if (!is_readable($arq)) return null;
+
+  $d = json_decode(file_get_contents($arq), true);
+  if (!is_array($d)) return null;
+  if (time() - (int) $d['quando'] > $CERRO_ENVIO['validade_min'] * 60) return null;
+
+  foreach ($d['opcoes'] as $op) {
+    if ($op['servico'] === $servico) return array_merge($op, array('cep' => $d['cep'], 'caixas' => $d['caixas']));
+  }
+  return null;
+}

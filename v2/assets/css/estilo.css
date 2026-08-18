@@ -1232,3 +1232,23 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* O desconto é a única linha do resumo que soma a favor da cliente, então é
    a única que muda de cor. Se tudo fosse colorido, nada seria. */
 .resumo__linha--desconto { color: #3F7A34; }
+
+/* Opções de envio na sacola */
+.opcoes-frete { display: grid; gap: .5rem; }
+.opcao-frete {
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: .3rem .7rem;
+  padding: .7rem .9rem;
+  border: 1px solid var(--linha); border-radius: var(--raio-suave);
+  cursor: pointer; transition: border-color var(--media), background var(--media);
+}
+.opcao-frete:hover { border-color: rgba(175,101,68,.42); }
+.opcao-frete--escolhida { border-color: var(--barro); background: rgba(175,101,68,.06); }
+.opcao-frete input { grid-row: span 2; margin: 0; accent-color: var(--barro); }
+.opcao-frete__nome  { font-family: var(--serif); font-size: 1.05rem; }
+.opcao-frete__preco { font-family: var(--serif); font-size: 1.05rem; text-align: right; }
+.opcao-frete__prazo {
+  grid-column: 2 / -1;
+  font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--terra-suave);
+}

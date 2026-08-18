@@ -105,7 +105,12 @@
       if (sub === 0) return 0;
       const limite = CFG.frete.freteGratisAcimaDe;
       if (limite !== null && sub >= limite) return 0;
-      return CFG.frete.valorPadrao;
+
+      /* Cotou pelo CEP? usa o escolhido. Senão, o valor fixo, que é o que a
+         loja cobrava antes de existir cotação e continua valendo para quem
+         fechar sem informar o CEP. */
+      const c = Frete.escolhido();
+      return c ? c.preco : CFG.frete.valorPadrao;
     },
 
     total() {
@@ -192,8 +197,56 @@
     history.replaceState(null, '', limpa.toString());
   })();
 
+  /* ======================================================================
+     Frete
+
+     O navegador guarda o PROTOCOLO da cotação e qual serviço a cliente
+     escolheu, nunca o valor cobrado. Na hora de fechar manda os dois, e o
+     servidor lê a cotação que ele mesmo guardou. Se o valor viajasse por
+     aqui, bastaria editar para pagar um centavo de frete.
+
+     O preço fica guardado só para desenhar a tela.
+     ====================================================================== */
+
+  const CHAVE_FRETE = 'cerro_frete';
+
+  const Frete = {
+    ler() {
+      try { return JSON.parse(sessionStorage.getItem(CHAVE_FRETE) || 'null'); }
+      catch (e) { return null; }
+    },
+    gravar(d) {
+      try { sessionStorage.setItem(CHAVE_FRETE, JSON.stringify(d)); } catch (e) {}
+    },
+    limpar() { try { sessionStorage.removeItem(CHAVE_FRETE); } catch (e) {} },
+
+    escolhido() {
+      const d = Frete.ler();
+      if (!d || !d.servico) return null;
+      return (d.opcoes || []).find((o) => o.servico === d.servico) || null;
+    },
+
+    async cotar(cep) {
+      const itens = Sacola.ler().map((i) => ({ id: i.id, qtd: i.qtd }));
+      const resp = await fetch('api/frete.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cep, itens }),
+      });
+      const d = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(d.erro || 'Não consegui cotar o frete.');
+
+      /* Já escolhe a mais barata: é o que a maioria quer, e quem prefere
+         rapidez troca em um clique. */
+      const maisBarata = d.opcoes.slice().sort((a, b) => a.preco - b.preco)[0];
+      Frete.gravar({ cep, protocolo: d.protocolo, opcoes: d.opcoes, servico: maisBarata.servico, origem: d.origem });
+      return d;
+    },
+  };
+
   window.CerroCupom = Cupom;
   window.CerroAtendente = Atendente;
+  window.CerroFrete = Frete;
 
   window.CerroSacola = Sacola;
   window.CerroDinheiro = dinheiro;
@@ -783,6 +836,7 @@
         const cupom = Cupom.atual();
         const atendentes = (CFG.atendentes && CFG.atendentes.lista) || [];
         const escolhida = Atendente.atual();
+        const freteAtual = Frete.ler();
 
         resumo.innerHTML = `
           <h3>Resumo do pedido</h3>
@@ -794,6 +848,27 @@
           <div class="resumo__total"><span>Total</span><strong>${dinheiro(Sacola.total())}</strong></div>
 
           <div class="checkout-extra">
+            <label class="campo">
+              <span class="campo__rotulo">Calcular frete</span>
+              <span class="campo__linha">
+                <input type="text" data-cerro="cep" inputmode="numeric" maxlength="9"
+                       value="${esc(freteAtual ? freteAtual.cep : '')}" placeholder="Seu CEP">
+                <button type="button" class="btn btn--vazado btn--curto" data-cerro="cotar">Calcular</button>
+              </span>
+              <span class="campo__ajuda" data-cerro="aviso-frete"></span>
+            </label>
+
+            ${freteAtual && freteAtual.opcoes ? `
+              <div class="opcoes-frete" role="radiogroup" aria-label="Forma de envio">
+                ${freteAtual.opcoes.map((o) => `
+                  <label class="opcao-frete${o.servico === freteAtual.servico ? ' opcao-frete--escolhida' : ''}">
+                    <input type="radio" name="frete" value="${esc(o.servico)}"${o.servico === freteAtual.servico ? ' checked' : ''}>
+                    <span class="opcao-frete__nome">${esc(o.nome)}</span>
+                    <span class="opcao-frete__prazo">${esc(o.prazo)}</span>
+                    <span class="opcao-frete__preco">${dinheiro(o.preco)}</span>
+                  </label>`).join('')}
+              </div>` : ''}
+
             <label class="campo">
               <span class="campo__rotulo">Cupom de desconto</span>
               <span class="campo__linha">
@@ -830,6 +905,41 @@
             else if (aviso) { aviso.textContent = 'Esse cupom não existe ou já expirou.'; aviso.classList.add('campo__ajuda--erro'); }
           }
           if (ev.target.closest('[data-cerro="tirar-cupom"]')) { Cupom.limpar(); repintar(); }
+
+          const botaoCotar = ev.target.closest('[data-cerro="cotar"]');
+          if (botaoCotar) {
+            const campo = $('[data-cerro="cep"]');
+            const avisoFrete = $('[data-cerro="aviso-frete"]');
+            const cep = (campo.value || '').replace(/\D/g, '');
+            if (cep.length !== 8) {
+              avisoFrete.textContent = 'Digite os 8 números do CEP.';
+              avisoFrete.classList.add('campo__ajuda--erro');
+              return;
+            }
+            botaoCotar.disabled = true;
+            botaoCotar.textContent = 'Calculando…';
+            Frete.cotar(cep)
+              .then(() => repintar())
+              .catch((erro) => {
+                botaoCotar.disabled = false;
+                botaoCotar.textContent = 'Calcular';
+                avisoFrete.textContent = erro.message;
+                avisoFrete.classList.add('campo__ajuda--erro');
+              });
+          }
+        });
+
+        /* Trocou de serviço: guarda a escolha e repinta, para o total já
+           refletir. O valor mostrado é só da tela; quem cobra é o servidor,
+           lendo a mesma cotação pelo protocolo. */
+        resumo.addEventListener('change', (ev) => {
+          const radio = ev.target.closest('input[name="frete"]');
+          if (!radio) return;
+          const d = Frete.ler();
+          if (!d) return;
+          d.servico = radio.value;
+          Frete.gravar(d);
+          repintar();
         });
 
         const sel = $('[data-cerro="atendente"]');
@@ -941,6 +1051,11 @@
             : null,
           vendedor,
           cupom,
+
+          /* Protocolo e serviço, nunca o preço. O servidor lê a cotação que
+             ele mesmo guardou e cobra aquilo. */
+          freteProtocolo: (Frete.ler() || {}).protocolo || '',
+          freteServico: (Frete.ler() || {}).servico || '',
         }),
       });
 
