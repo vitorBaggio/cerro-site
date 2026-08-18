@@ -109,9 +109,91 @@
     },
 
     total() {
-      return Sacola.subtotal() + Sacola.frete();
+      return Math.max(0, Sacola.subtotal() - Sacola.desconto()) + Sacola.frete();
+    },
+
+    /* Desconto do cupom guardado. Este número é só para a tela: quem abate
+       de verdade é o servidor, em api/criar-preferencia.php. Aqui é para a
+       cliente ver o efeito antes de decidir. */
+    desconto() {
+      const c = Cupom.atual();
+      if (!c) return 0;
+      const sub = Sacola.subtotal();
+      if (sub < (c.minimo || 0)) return 0;
+      const bruto = c.tipo === 'percentual' ? sub * (c.valor / 100) : c.valor;
+      return Math.min(bruto, sub);
     },
   };
+
+  /* ======================================================================
+     Cupom e atendente
+
+     Os dois vivem no navegador só para a tela mostrar o efeito. O que vale
+     é sempre o servidor: ele revalida o cupom e regrava o código da
+     atendente no pedido. Confiar no navegador aqui seria o mesmo buraco do
+     preço, com outro nome.
+     ====================================================================== */
+
+  const CHAVE_CUPOM = 'cerro_cupom';
+  const CHAVE_ATENDENTE = 'cerro_atendente';
+
+  const Cupom = {
+    atual() {
+      let cod;
+      try { cod = localStorage.getItem(CHAVE_CUPOM); } catch (e) { return null; }
+      if (!cod) return null;
+      return (CFG.cupons || []).find((c) => c.codigo === cod) || null;
+    },
+    aplicar(codigo) {
+      const achado = (CFG.cupons || []).find(
+        (c) => c.codigo.toLowerCase() === String(codigo).trim().toLowerCase());
+      if (!achado) return false;
+      try { localStorage.setItem(CHAVE_CUPOM, achado.codigo); } catch (e) {}
+      return true;
+    },
+    limpar() { try { localStorage.removeItem(CHAVE_CUPOM); } catch (e) {} },
+  };
+
+  const Atendente = {
+    /* Guarda com data de validade. Sem isso, uma cliente que entrou uma vez
+       pelo link da Ana ficaria dela para sempre. */
+    gravar(codigo) {
+      const dias = (CFG.atendentes && CFG.atendentes.memoriaEmDias) || 60;
+      const ate = Date.now() + dias * 86400000;
+      try { localStorage.setItem(CHAVE_ATENDENTE, JSON.stringify({ codigo, ate })); } catch (e) {}
+    },
+    atual() {
+      try {
+        const bruto = localStorage.getItem(CHAVE_ATENDENTE);
+        if (!bruto) return '';
+        const d = JSON.parse(bruto);
+        if (!d || !d.codigo || Date.now() > d.ate) { localStorage.removeItem(CHAVE_ATENDENTE); return ''; }
+        const lista = (CFG.atendentes && CFG.atendentes.lista) || [];
+        return lista.some((a) => a.codigo === d.codigo) ? d.codigo : '';
+      } catch (e) { return ''; }
+    },
+    nomeDe(codigo) {
+      const lista = (CFG.atendentes && CFG.atendentes.lista) || [];
+      const a = lista.find((x) => x.codigo === codigo);
+      return a ? a.nome : '';
+    },
+  };
+
+  /* Chegou por link de atendente? Grava e some com o parâmetro da barra de
+     endereço, para a cliente não compartilhar o link de indicação sem saber. */
+  (function capturarLinkDeAtendente() {
+    const v = new URLSearchParams(location.search).get('v');
+    if (!v) return;
+    const lista = (CFG.atendentes && CFG.atendentes.lista) || [];
+    if (!lista.some((a) => a.codigo === v)) return;
+    Atendente.gravar(v);
+    const limpa = new URL(location.href);
+    limpa.searchParams.delete('v');
+    history.replaceState(null, '', limpa.toString());
+  })();
+
+  window.CerroCupom = Cupom;
+  window.CerroAtendente = Atendente;
 
   window.CerroSacola = Sacola;
   window.CerroDinheiro = dinheiro;
@@ -697,14 +779,64 @@
       const falta = limite !== null ? limite - Sacola.subtotal() : 0;
 
       if (resumo) {
+        const desconto = Sacola.desconto();
+        const cupom = Cupom.atual();
+        const atendentes = (CFG.atendentes && CFG.atendentes.lista) || [];
+        const escolhida = Atendente.atual();
+
         resumo.innerHTML = `
           <h3>Resumo do pedido</h3>
           <div class="resumo__linha"><span>Subtotal</span><span>${dinheiro(Sacola.subtotal())}</span></div>
+          ${desconto > 0 ? `<div class="resumo__linha resumo__linha--desconto">
+              <span>Desconto ${esc(cupom.codigo)}</span><span>− ${dinheiro(desconto)}</span></div>` : ''}
           <div class="resumo__linha"><span>Frete</span><span>${frete === 0 ? 'Grátis' : dinheiro(frete)}</span></div>
           ${falta > 0 ? `<p class="campo__ajuda">Faltam ${dinheiro(falta)} para o frete grátis.</p>` : ''}
           <div class="resumo__total"><span>Total</span><strong>${dinheiro(Sacola.total())}</strong></div>
+
+          <div class="checkout-extra">
+            <label class="campo">
+              <span class="campo__rotulo">Cupom de desconto</span>
+              <span class="campo__linha">
+                <input type="text" data-cerro="cupom" value="${esc(cupom ? cupom.codigo : '')}"
+                       placeholder="Se você tiver um" autocomplete="off" spellcheck="false">
+                <button type="button" class="btn btn--vazado btn--curto"
+                        data-cerro="${cupom ? 'tirar-cupom' : 'usar-cupom'}">${cupom ? 'Tirar' : 'Usar'}</button>
+              </span>
+              <span class="campo__ajuda" data-cerro="aviso-cupom"></span>
+            </label>
+
+            ${atendentes.length ? `
+            <label class="campo">
+              <span class="campo__rotulo">Alguém te atendeu?</span>
+              <select data-cerro="atendente">
+                <option value="">Nenhuma</option>
+                ${atendentes.map((a) => `
+                  <option value="${esc(a.codigo)}"${a.codigo === escolhida ? ' selected' : ''}>${esc(a.nome)}</option>`).join('')}
+              </select>
+              <span class="campo__ajuda">Assim a gente sabe quem te ajudou na escolha.</span>
+            </label>` : ''}
+          </div>
+
           <button class="btn btn--largo" style="margin-top:1.6rem" data-cerro="finalizar">Finalizar pedido</button>
           <p class="campo__ajuda" style="text-align:center;margin-top:1rem">${esc(CFG.frete.prazoTexto)}</p>`;
+
+        const aviso = $('[data-cerro="aviso-cupom"]');
+
+        resumo.addEventListener('click', (ev) => {
+          if (ev.target.closest('[data-cerro="usar-cupom"]')) {
+            const campo = $('[data-cerro="cupom"]');
+            if (!campo.value.trim()) return;
+            if (Cupom.aplicar(campo.value)) { repintar(); }
+            else if (aviso) { aviso.textContent = 'Esse cupom não existe ou já expirou.'; aviso.classList.add('campo__ajuda--erro'); }
+          }
+          if (ev.target.closest('[data-cerro="tirar-cupom"]')) { Cupom.limpar(); repintar(); }
+        });
+
+        const sel = $('[data-cerro="atendente"]');
+        if (sel) sel.addEventListener('change', () => {
+          if (sel.value) Atendente.gravar(sel.value);
+          else { try { localStorage.removeItem(CHAVE_ATENDENTE); } catch (e) {} }
+        });
       }
     }
 
@@ -788,11 +920,15 @@
     const cliente = window.CerroContas && window.CerroContas.atual();
 
     /* Código de quem indicou a venda, quando existir. Hoje não existe: o site
-       ainda não captura o código do vendedor pela URL. O campo já viaja para
-       o servidor, então quando a lista de vendedores for definida, só falta
-       gravar essa chave. */
-    let vendedor = '';
-    try { vendedor = localStorage.getItem('cerro_vendedor') || ''; } catch (e) {}
+       vem do seletor da finalização ou do link próprio dela. Vazio quando a
+       cliente deixou em "Nenhuma", que é o padrão. */
+    const vendedor = Atendente.atual();
+
+    /* O código do cupom, não o valor. Mandar o valor seria entregar o
+       desconto para quem souber editar o navegador: o servidor revalida o
+       código na tabela dele e calcula o abatimento de novo. */
+    const cupomAtual = Cupom.atual();
+    const cupom = cupomAtual ? cupomAtual.codigo : '';
 
     try {
       const resposta = await fetch(CFG.pagamento.mercadoPago.endpointPreferencia, {
@@ -804,6 +940,7 @@
             ? { nome: cliente.nome, email: cliente.email, whatsapp: cliente.whatsapp }
             : null,
           vendedor,
+          cupom,
         }),
       });
 

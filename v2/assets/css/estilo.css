@@ -1214,3 +1214,21 @@ button, input, select, textarea { font: inherit; color: inherit; }
   }
   .aparece { opacity: 1; transform: none; }
 }
+
+/* ==========================================================================
+   Cupom e atendente na finalização
+   ========================================================================== */
+
+.checkout-extra {
+  margin-top: 1.6rem; padding-top: 1.4rem;
+  border-top: 1px solid var(--linha);
+  display: grid; gap: 1.1rem;
+}
+.campo__linha { display: flex; gap: .5rem; }
+.campo__linha input { flex: 1; min-width: 0; }
+.btn--curto { padding-inline: 1.1rem; white-space: nowrap; }
+.campo__ajuda--erro { color: #A8402A; }
+
+/* O desconto é a única linha do resumo que soma a favor da cliente, então é
+   a única que muda de cor. Se tudo fosse colorido, nada seria. */
+.resumo__linha--desconto { color: #3F7A34; }

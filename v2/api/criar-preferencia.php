@@ -69,12 +69,20 @@ foreach ($dados['itens'] as $pedido) {
   $resumo[] = $qtd . 'x ' . $catalogo[$id]['nome'];
 }
 
+/* --- Desconto, calculado aqui e não aceito do navegador ----------------
+   O navegador manda o CÓDIGO do cupom, nunca o valor. Aceitar o valor seria
+   entregar o desconto para quem souber abrir o console: bastaria mandar
+   "desconto: 119" num kit de 120. A função revalida o código na tabela do
+   servidor, confere validade e mínimo, e devolve quanto abater. */
+$codigoCupom = isset($dados['cupom']) ? substr(preg_replace('/[^A-Za-z0-9_-]/', '', (string) $dados['cupom']), 0, 24) : '';
+$desconto = cerro_desconto($codigoCupom, $subtotal);
+
 /* --- Frete, também calculado aqui ------------------------------------- */
 $frete = (float) $CERRO_LOJA['frete_valor'];
 $limite = $CERRO_LOJA['frete_gratis_acima'];
 if ($limite !== null && $subtotal >= (float) $limite) $frete = 0.0;
 
-$total = round($subtotal + $frete, 2);
+$total = round($subtotal - $desconto + $frete, 2);
 
 /* --- Dados de quem está comprando, se ele estiver logado -------------- */
 $cliente = isset($dados['cliente']) && is_array($dados['cliente']) ? $dados['cliente'] : array();
@@ -84,10 +92,9 @@ if (!empty($cliente['email']) && filter_var($cliente['email'], FILTER_VALIDATE_E
   $comprador['email'] = $cliente['email'];
 }
 
-/* Código de quem indicou a venda. Chega vazio hoje: o site ainda não captura
-   o código do vendedor. O campo já viaja para o Mercado Pago e para o
-   registro do pedido, então quando a lista de vendedores existir, só falta
-   preencher do lado do navegador. */
+/* Código de quem atendeu a venda. Vem do seletor da finalização ou do link
+   próprio da atendente. Vazio quando a cliente deixou em 'Nenhuma', que é o
+   padrão: ninguém ganha comissão por descuido dela. */
 $vendedor = isset($dados['vendedor']) ? substr(preg_replace('/[^A-Za-z0-9_-]/', '', (string) $dados['vendedor']), 0, 24) : '';
 
 /* --- Nosso número do pedido ------------------------------------------- */
@@ -112,11 +119,28 @@ $preferencia = array(
   ),
   'metadata' => array(
     'vendedor'  => $vendedor,
+    'cupom'     => $desconto > 0 ? strtoupper($codigoCupom) : '',
+    'desconto'  => round($desconto, 2),
     'whatsapp'  => isset($cliente['whatsapp']) ? preg_replace('/\D/', '', (string) $cliente['whatsapp']) : '',
     'subtotal'  => round($subtotal, 2),
     'frete'     => round($frete, 2),
   ),
 );
+
+/* O desconto entra como uma linha negativa na lista, e não abatendo o preço
+   unitário de cada item. Duas razões: a cliente vê "Desconto PRIMEIRA10,
+   −R$ 12,00" na tela do Mercado Pago em vez de um preço de produto que não
+   bate com o do site, e o registro do pedido guarda o preço cheio, que é o
+   que serve para conferir margem depois. */
+if ($desconto > 0) {
+  $preferencia['items'][] = array(
+    'id'          => 'desconto',
+    'title'       => 'Desconto ' . strtoupper($codigoCupom),
+    'quantity'    => 1,
+    'unit_price'  => -round($desconto, 2),
+    'currency_id' => $CERRO_LOJA['moeda'],
+  );
+}
 
 /* O frete entra como custo de envio, e não como mais um item da lista, para
    aparecer separado na tela do Mercado Pago igual aparece na sacola. */
@@ -144,6 +168,8 @@ cerro_registrar(array(
   'estado'     => 'iniciado',
   'itens'      => $resumo,
   'subtotal'   => round($subtotal, 2),
+  'desconto'   => round($desconto, 2),
+  'cupom'      => $desconto > 0 ? strtoupper($codigoCupom) : '',
   'frete'      => round($frete, 2),
   'total'      => $total,
   'cliente'    => $comprador,

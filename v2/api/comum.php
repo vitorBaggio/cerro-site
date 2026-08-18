@@ -27,6 +27,49 @@ $CERRO_LOJA = array(
 );
 
 /* --------------------------------------------------------------------------
+   Cupons de desconto
+
+   ESTA é a lista que vale. A de assets/js/config.js existe só para a loja
+   mostrar o efeito na tela antes da cliente decidir; o abatimento que chega
+   ao Mercado Pago sai daqui.
+
+   As duas precisam bater. Mudou uma, mude a outra. Se mudar só o JavaScript,
+   a cliente vê um desconto e paga outro; se mudar só aqui, ela paga menos
+   sem entender por quê. O api/diagnostico.php compara as duas e avisa.
+
+   'percentual' usa 'valor' como porcentagem, 'fixo' usa como reais.
+   'minimo' é o subtotal a partir do qual o cupom passa a valer.
+   'ate' é a validade, no formato AAAA-MM-DD. Use null para não expirar.
+   -------------------------------------------------------------------------- */
+$CERRO_CUPONS = array(
+  // 'PRIMEIRA10'  => array('tipo' => 'percentual', 'valor' => 10, 'minimo' => 0,   'ate' => null),
+  // 'FRETEGRATIS' => array('tipo' => 'fixo',       'valor' => 25, 'minimo' => 150, 'ate' => '2026-12-31'),
+);
+
+/** Quanto abater, em reais, para este código e este subtotal.
+ *  Devolve 0 para cupom inexistente, vencido ou abaixo do mínimo: um código
+ *  inválido nunca derruba o pedido, só não desconta. */
+function cerro_desconto($codigo, $subtotal) {
+  global $CERRO_CUPONS;
+  if (!$codigo) return 0.0;
+
+  $chave = strtoupper(trim((string) $codigo));
+  if (!isset($CERRO_CUPONS[$chave])) return 0.0;
+
+  $c = $CERRO_CUPONS[$chave];
+  if (!empty($c['ate']) && date('Y-m-d') > $c['ate']) return 0.0;
+  if ($subtotal < (float) $c['minimo']) return 0.0;
+
+  $bruto = ($c['tipo'] === 'percentual')
+    ? $subtotal * ((float) $c['valor'] / 100)
+    : (float) $c['valor'];
+
+  /* Nunca deixa o desconto passar do subtotal: com frete no pedido, um
+     total negativo seria aceito pela conta e recusado pelo Mercado Pago. */
+  return round(min($bruto, $subtotal), 2);
+}
+
+/* --------------------------------------------------------------------------
    Onde procurar o arquivo de segredo. Tenta os caminhos prováveis na
    HostGator e para no primeiro que existir. Se você colocou em outro lugar,
    acrescente o caminho no começo da lista.
