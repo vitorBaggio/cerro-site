@@ -125,10 +125,28 @@ foreach ($n in @('florescer-coracao','florescer-esfoliante','florescer-geleia','
   $maior=0; $yMaior=0
   for($y=0;$y -lt $h;$y++){ if($largura[$y] -gt $maior){$maior=$largura[$y];$yMaior=$y} }
 
-  $limiteColapso = [int]($maior * 0.25)
+  # A peca afunila ate tocar a superficie; dali para baixo comeca o reflexo,
+  # que VOLTA a alargar. Entao o ponto de contato e o ultimo antes da largura
+  # crescer de novo.
+  #
+  # A versao anterior cortava na primeira linha abaixo de 25% da largura
+  # maxima. Funcionou nos potes, que tem base reta e despencam de uma vez, e
+  # decepou a ponta do coracao, que afunila devagar e cruza os 25% muito
+  # antes de terminar. Medido: cortava em 649 quando a ponta esta em 690.
+  #
+  # Procurar a virada de sentido nao depende da forma da peca. Exijo que o
+  # crescimento seja claro, senao ruido de uma ou duas linhas pararia o
+  # laco cedo, e que a largura ja esteja bem abaixo do maximo, para nao
+  # confundir uma reentrancia do produto com o comeco do reflexo.
   $base = $h-1
-  for($y=$yMaior;$y -lt $h;$y++){
-    if($largura[$y] -lt $limiteColapso){ $base=$y; break }
+  $anterior = $maior
+  for($y=$yMaior+1;$y -lt $h;$y++){
+    $atual = $largura[$y]
+    if($atual -eq 0){ $base = $y-1; break }
+    if($atual -gt ($anterior*1.15 + 3) -and $anterior -lt ($maior*0.5)){
+      $base = $y-1; break
+    }
+    if($atual -lt $anterior){ $anterior = $atual }
   }
 
   # caixa da peca, agora limitada a base encontrada

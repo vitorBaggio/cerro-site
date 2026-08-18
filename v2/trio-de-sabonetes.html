@@ -38,41 +38,11 @@
           qual essência combina com você.
         </p>
 
-        <ul style="list-style:none;padding:0;margin:2rem 0;display:grid;gap:.9rem">
-          <li style="border-left:2px solid var(--despertar);padding-left:1.2rem">
-            <strong>Brisa Rosada</strong><br>
-            <span style="font-size:.88rem;color:var(--terra-suave)">Romã, Pitanga e Hibisco · argila rosa</span>
-          </li>
-          <li style="border-left:2px solid var(--pureza);padding-left:1.2rem">
-            <strong>Toque de Algodão</strong><br>
-            <span style="font-size:.88rem;color:var(--terra-suave)">Baunilha e Sândalo · argila branca</span>
-          </li>
-          <li style="border-left:2px solid var(--sol);padding-left:1.2rem">
-            <strong>Frescor do Amanhecer</strong><br>
-            <span style="font-size:.88rem;color:var(--terra-suave)">Copaíba e Capim-Limão · argila vermelha</span>
-          </li>
-        </ul>
-
-        <div class="seletor" style="max-width:420px">
-          <div class="linha-quantidade">
-            <div class="qtd">
-              <button type="button" data-passo="-1" aria-label="Diminuir quantidade">−</button>
-              <span data-cerro="qtd-simples" aria-live="polite">1</span>
-              <button type="button" data-passo="1" aria-label="Aumentar quantidade">+</button>
-            </div>
-            <div class="total-seletor">
-              <small>Total</small>
-              <span data-cerro="total-simples">R$ 84,00</span>
-            </div>
-          </div>
-
-          <button class="btn btn--largo" type="button"
-                  data-cerro="add-simples"
-                  data-id="trio-sabonetes"
-                  data-nome="Trio de Sabonetes"
-                  data-detalhe="Um sabonete de cada ritual, 3 × 80 g"
-                  data-preco="84">Adicionar à sacola</button>
-        </div>
+        <!-- Os três sabonetes agora são escolhidos, não impostos. Pode levar
+             um de cada, dois iguais e um diferente, ou três do mesmo. Como
+             os três custam R$ 28, qualquer combinação fecha em R$ 84 e o
+             preço não muda com a escolha. -->
+        <div data-cerro="trio-escolha"></div>
       </div>
 
       <!-- Sem foto do trio ainda: montamos o conjunto com um close de cada

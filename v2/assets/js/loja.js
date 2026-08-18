@@ -614,6 +614,129 @@
   }
 
   /* ======================================================================
+     Trio de Sabonetes: a cliente escolhe os três
+
+     Antes era um conjunto fechado, um de cada ritual. Agora ela monta: três
+     iguais, dois e um, ou um de cada. Como os três custam R$ 28, qualquer
+     combinação fecha em R$ 84 e o preço não muda com a escolha.
+
+     O que vai para a sacola são TRÊS itens de sabonete, e não um item
+     "trio". Assim o servidor cobra cada um pelo preço dele sem precisar de
+     regra nova, e o pedido chega dizendo exatamente quais sabonetes
+     embalar, que é o que a produção precisa ler.
+     ====================================================================== */
+
+  function montarTrio() {
+    const alvo = $('[data-cerro="trio-escolha"]');
+    if (!alvo) return;
+
+    /* Os sabonetes da casa, um por ritual, tirados do próprio catálogo. */
+    const sabonetes = CAT.rituais.map((r) => {
+      const s = r.produtos.find((p) => p.tipo === 'sabonete');
+      return { id: s.id, nome: s.nome, preco: s.preco, ritual: r.nomeCurto, essencias: r.essencias, cor: r.cor };
+    });
+
+    /* Começa com um de cada, que era o trio de antes. */
+    let escolha = sabonetes.map((s) => s.id);
+    let qtd = 1;
+
+    function precoTotal() {
+      return escolha.reduce((soma, id) => soma + sabonetes.find((s) => s.id === id).preco, 0) * qtd;
+    }
+
+    function pintar() {
+      alvo.innerHTML = `
+        <div class="trio-escolha">
+          ${escolha.map((id, i) => {
+            const s = sabonetes.find((x) => x.id === id);
+            return `
+            <label class="campo trio-escolha__campo" style="--cor:${esc(s.cor)}">
+              <span class="campo__rotulo">Sabonete ${i + 1}</span>
+              <select data-trio="${i}">
+                ${sabonetes.map((o) => `
+                  <option value="${esc(o.id)}"${o.id === id ? ' selected' : ''}>${esc(o.nome)}</option>`).join('')}
+              </select>
+              <span class="campo__ajuda">${esc(s.essencias)}</span>
+            </label>`;
+          }).join('')}
+        </div>
+
+        <div class="seletor" style="max-width:420px;margin-top:1.6rem">
+          <div class="linha-quantidade">
+            <div class="qtd">
+              <button type="button" data-trio-passo="-1" aria-label="Diminuir quantidade">−</button>
+              <span aria-live="polite">${qtd}</span>
+              <button type="button" data-trio-passo="1" aria-label="Aumentar quantidade">+</button>
+            </div>
+            <div class="total-seletor">
+              <small>Total</small>
+              <span>${dinheiro(precoTotal())}</span>
+            </div>
+          </div>
+          <button class="btn btn--largo" type="button" data-cerro="add-trio">Adicionar à sacola</button>
+        </div>`;
+    }
+
+    /* Atualiza no lugar em vez de repintar.
+     *
+     * Repintar o bloco inteiro destrói o próprio <select> que a pessoa
+     * acabou de usar: ele é recriado, o foco se perde e, em celular, o
+     * teclado ou a roleta de opções fecha sozinha. Como o preço dos três
+     * sabonetes é o mesmo, mudar a escolha nem altera o total: só a linha
+     * de essências abaixo do campo precisa acompanhar. */
+    alvo.addEventListener('change', (ev) => {
+      const sel = ev.target.closest('[data-trio]');
+      if (!sel) return;
+
+      const i = Number(sel.dataset.trio);
+      escolha[i] = sel.value;
+
+      const s = sabonetes.find((x) => x.id === sel.value);
+      const campo = sel.closest('.trio-escolha__campo');
+      campo.style.setProperty('--cor', s.cor);
+      campo.querySelector('.campo__ajuda').textContent = s.essencias;
+
+      const totalNaTela = alvo.querySelector('.total-seletor span');
+      if (totalNaTela) totalNaTela.textContent = dinheiro(precoTotal());
+    });
+
+    alvo.addEventListener('click', (ev) => {
+      const passo = ev.target.closest('[data-trio-passo]');
+      if (passo) {
+        qtd = Math.max(1, Math.min(20, qtd + Number(passo.dataset.trioPasso)));
+        alvo.querySelector('.qtd span').textContent = qtd;
+        alvo.querySelector('.total-seletor span').textContent = dinheiro(precoTotal());
+        return;
+      }
+
+      if (!ev.target.closest('[data-cerro="add-trio"]')) return;
+
+      /* Três iguais viram uma linha de quantidade 3, não três linhas de 1:
+         a sacola fica legível e a conta dá no mesmo. */
+      const contagem = {};
+      escolha.forEach((id) => { contagem[id] = (contagem[id] || 0) + 1; });
+
+      Object.entries(contagem).forEach(([id, vezes]) => {
+        const s = sabonetes.find((x) => x.id === id);
+        Sacola.adicionar({
+          id,
+          nome: s.nome,
+          ritual: s.ritual,
+          detalhe: 'Do Trio de Sabonetes',
+          preco: s.preco,
+          foto: '',
+          qtd: vezes * qtd,
+        });
+      });
+
+      const nomes = escolha.map((id) => sabonetes.find((s) => s.id === id).nome);
+      avisar('Trio adicionado: ' + nomes.join(', '));
+    });
+
+    pintar();
+  }
+
+  /* ======================================================================
      Seletor de compra (páginas de ritual)
      ====================================================================== */
 
@@ -1385,6 +1508,7 @@
     preencherConfig();
     montarGradeRituais();
     montarPresente();
+    montarTrio();
     montarPecasPresente();
     montarCompraPresente();
     montarSeletor();

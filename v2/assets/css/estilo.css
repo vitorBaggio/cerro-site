@@ -1263,3 +1263,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .entrega__dupla { grid-template-columns: 1fr; }
   .campo--curto input { width: 100%; }
 }
+
+/* Escolha dos três sabonetes */
+.trio-escolha { display: grid; gap: .9rem; margin: 2rem 0 0; }
+.trio-escolha__campo {
+  margin: 0; padding-left: 1.1rem;
+  border-left: 2px solid var(--cor, var(--barro));
+}
+.trio-escolha__campo select { width: 100%; }
