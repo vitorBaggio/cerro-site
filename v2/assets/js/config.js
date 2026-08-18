@@ -148,8 +148,7 @@ window.CERRO_CONFIG = {
      reais. `minimo` é o subtotal a partir do qual o cupom vale.
      ---------------------------------------------------------------------- */
   cupons: [
-    // { codigo: 'PRIMEIRA10', tipo: 'percentual', valor: 10, minimo: 0 },
-    // { codigo: 'FRETEGRATIS', tipo: 'fixo', valor: 25, minimo: 150 },
+    { codigo: 'PRIMEIROCERRO', tipo: 'percentual', valor: 10, minimo: 0 },
   ],
 
   /* --- Cadastro de clientes ---------------------------------------------

@@ -42,8 +42,7 @@ $CERRO_LOJA = array(
    'ate' é a validade, no formato AAAA-MM-DD. Use null para não expirar.
    -------------------------------------------------------------------------- */
 $CERRO_CUPONS = array(
-  // 'PRIMEIRA10'  => array('tipo' => 'percentual', 'valor' => 10, 'minimo' => 0,   'ate' => null),
-  // 'FRETEGRATIS' => array('tipo' => 'fixo',       'valor' => 25, 'minimo' => 150, 'ate' => '2026-12-31'),
+  'PRIMEIROCERRO' => array('tipo' => 'percentual', 'valor' => 10, 'minimo' => 0, 'ate' => null),
 );
 
 /** Quanto abater, em reais, para este código e este subtotal.
