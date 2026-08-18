@@ -60,20 +60,29 @@ if ($caixas > 10) cerro_responder(400, array('erro' => 'Pedido grande demais par
 
 
 /* --- Cota ---------------------------------------------------------------
-   Com token do intermediário, cotação real. Sem token, tabela por região.
-   A tabela não é só plano B de configuração: ela é a rede de segurança para
-   quando a API do intermediário cair, e API cai. */
-$segredo = cerro_segredo();
-$token = ($segredo && !empty($segredo['frete_token'])) ? $segredo['frete_token'] : '';
+   A ordem importa.
 
-$opcoes = $token
-  ? cerro_cotar_intermediario($token, $cep, $caixas)
-  : array();
+   1. Cuiabá e Várzea Grande primeiro, e essa regra ganha de tudo. Ali a
+      entrega é da própria loja, com valor fixo combinado. Cotar Correios
+      para o vizinho seria cobrar caro por uma entrega que ele mesmo faz.
+   2. Depois, cotação real com o token do intermediário.
+   3. Por último, a tabela por região. Ela não é só o plano B de quem ainda
+      não configurou o token: é a rede de segurança para quando a API de
+      terceiro cair, e API cai. A loja nunca para de vender por causa disso. */
+if (cerro_e_local($cep)) {
+  $opcoes = cerro_opcao_local();
+  $origem = 'local';
+} else {
+  $segredo = cerro_segredo();
+  $token = ($segredo && !empty($segredo['frete_token'])) ? $segredo['frete_token'] : '';
 
-$origem = 'transportadora';
-if (!$opcoes) {
-  $opcoes = cerro_cotar_por_regiao($cep, $caixas);
-  $origem = 'tabela';
+  $opcoes = $token ? cerro_cotar_intermediario($token, $cep, $caixas) : array();
+  $origem = 'transportadora';
+
+  if (!$opcoes) {
+    $opcoes = cerro_cotar_por_regiao($cep, $caixas);
+    $origem = 'tabela';
+  }
 }
 
 if (!$opcoes) cerro_responder(502, array('erro' => 'Não consegui cotar o frete agora.'));

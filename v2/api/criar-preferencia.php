@@ -117,6 +117,18 @@ if (!empty($cliente['email']) && filter_var($cliente['email'], FILTER_VALIDATE_E
    padrão: ninguém ganha comissão por descuido dela. */
 $vendedor = isset($dados['vendedor']) ? substr(preg_replace('/[^A-Za-z0-9_-]/', '', (string) $dados['vendedor']), 0, 24) : '';
 
+/* --- Endereço de entrega -----------------------------------------------
+   Vem do formulário da sacola. É dado pessoal, então guardo só o necessário
+   para postar a encomenda e nada além: nome, endereço e WhatsApp. Sem CPF,
+   sem data de nascimento, sem nada que a etiqueta não peça. */
+$e = isset($dados['entrega']) && is_array($dados['entrega']) ? $dados['entrega'] : array();
+$entrega = array();
+foreach (array('nome','rua','numero','bairro','complemento') as $campo) {
+  if (!empty($e[$campo])) $entrega[$campo] = cerro_corta((string) $e[$campo], 120);
+}
+if (!empty($e['whatsapp'])) $entrega['whatsapp'] = preg_replace('/\D/', '', (string) $e['whatsapp']);
+if ($freteCep) $entrega['cep'] = $freteCep;
+
 /* --- Nosso número do pedido ------------------------------------------- */
 $referencia = 'CERRO-' . date('Ymd-His') . '-' . substr(bin2hex(random_bytes(4)), 0, 6);
 
@@ -198,6 +210,7 @@ cerro_registrar(array(
   'total'      => $total,
   'cliente'    => $comprador,
   'vendedor'   => $vendedor,
+  'entrega'    => $entrega,
   'preference' => isset($r['corpo']['id']) ? $r['corpo']['id'] : '',
 ));
 

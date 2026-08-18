@@ -244,9 +244,46 @@
     },
   };
 
+  /* ======================================================================
+     Endereço de entrega
+
+     Fica no navegador da cliente e só viaja no fechamento. Guardar aqui
+     poupa ela de redigitar se sair e voltar, e não cria base de dados
+     nenhuma do nosso lado: LGPD é mais fácil quando o dado não existe.
+     ====================================================================== */
+
+  const CHAVE_ENTREGA = 'cerro_entrega';
+
+  const Entrega = {
+    ler() {
+      try { return JSON.parse(localStorage.getItem(CHAVE_ENTREGA) || '{}') || {}; }
+      catch (e) { return {}; }
+    },
+    gravar(d) {
+      try { localStorage.setItem(CHAVE_ENTREGA, JSON.stringify(d)); } catch (e) {}
+    },
+    /** Devolve o primeiro campo obrigatório que está vazio, ou null. */
+    faltando() {
+      const d = Entrega.ler();
+      const obrigatorios = [
+        ['nome', 'seu nome completo'],
+        ['rua', 'a rua'],
+        ['numero', 'o número'],
+        ['bairro', 'o bairro'],
+        ['whatsapp', 'seu WhatsApp'],
+      ];
+      for (const [campo, rotulo] of obrigatorios) {
+        if (!String(d[campo] || '').trim()) return rotulo;
+      }
+      if (String(d.whatsapp).replace(/\D/g, '').length < 10) return 'um WhatsApp com DDD';
+      return null;
+    },
+  };
+
   window.CerroCupom = Cupom;
   window.CerroAtendente = Atendente;
   window.CerroFrete = Frete;
+  window.CerroEntrega = Entrega;
 
   window.CerroSacola = Sacola;
   window.CerroDinheiro = dinheiro;
@@ -837,6 +874,7 @@
         const atendentes = (CFG.atendentes && CFG.atendentes.lista) || [];
         const escolhida = Atendente.atual();
         const freteAtual = Frete.ler();
+        const entrega = Entrega.ler();
 
         resumo.innerHTML = `
           <h3>Resumo do pedido</h3>
@@ -868,6 +906,41 @@
                     <span class="opcao-frete__preco">${dinheiro(o.preco)}</span>
                   </label>`).join('')}
               </div>` : ''}
+
+            ${freteAtual && freteAtual.opcoes ? `
+              <fieldset class="entrega">
+                <legend class="campo__rotulo">Para onde enviar</legend>
+                <label class="campo campo--junto">
+                  <span class="campo__rotulo">Nome completo</span>
+                  <input type="text" data-entrega="nome" autocomplete="name" value="${esc(entrega.nome || '')}">
+                </label>
+                <div class="entrega__dupla">
+                  <label class="campo campo--junto">
+                    <span class="campo__rotulo">Rua</span>
+                    <input type="text" data-entrega="rua" autocomplete="address-line1" value="${esc(entrega.rua || '')}">
+                  </label>
+                  <label class="campo campo--junto campo--curto">
+                    <span class="campo__rotulo">Número</span>
+                    <input type="text" data-entrega="numero" value="${esc(entrega.numero || '')}">
+                  </label>
+                </div>
+                <div class="entrega__dupla">
+                  <label class="campo campo--junto">
+                    <span class="campo__rotulo">Bairro</span>
+                    <input type="text" data-entrega="bairro" value="${esc(entrega.bairro || '')}">
+                  </label>
+                  <label class="campo campo--junto campo--curto">
+                    <span class="campo__rotulo">Complemento</span>
+                    <input type="text" data-entrega="complemento" value="${esc(entrega.complemento || '')}">
+                  </label>
+                </div>
+                <label class="campo campo--junto">
+                  <span class="campo__rotulo">WhatsApp</span>
+                  <input type="tel" data-entrega="whatsapp" inputmode="numeric"
+                         placeholder="(65) 90000-0000" value="${esc(entrega.whatsapp || '')}">
+                  <span class="campo__ajuda">É por aqui que a gente manda o código de rastreio.</span>
+                </label>
+              </fieldset>` : ''}
 
             <label class="campo">
               <span class="campo__rotulo">Cupom de desconto</span>
@@ -942,6 +1015,16 @@
           repintar();
         });
 
+        /* Endereço: grava a cada tecla, sem repintar. Repintar aqui apagaria
+           o que ela está digitando e tiraria o foco do campo. */
+        resumo.addEventListener('input', (ev) => {
+          const campo = ev.target.closest('[data-entrega]');
+          if (!campo) return;
+          const d = Entrega.ler();
+          d[campo.dataset.entrega] = campo.value;
+          Entrega.gravar(d);
+        });
+
         const sel = $('[data-cerro="atendente"]');
         if (sel) sel.addEventListener('change', () => {
           if (sel.value) Atendente.gravar(sel.value);
@@ -976,6 +1059,19 @@
   function finalizarPedido() {
     const itens = Sacola.ler();
     if (itens.length === 0) return;
+
+    /* Sem endereço não dá para emitir etiqueta, e descobrir isso depois do
+       pagamento significa caçar a cliente no WhatsApp. Só cobro quando ela
+       já cotou o frete: antes disso o formulário nem apareceu. */
+    if (Frete.ler()) {
+      const falta = Entrega.faltando();
+      if (falta) {
+        avisar('Antes de fechar, preencha ' + falta + '.');
+        const alvo = $('[data-entrega]:placeholder-shown, [data-entrega]');
+        if (alvo) { alvo.scrollIntoView({ block: 'center', behavior: 'smooth' }); alvo.focus(); }
+        return;
+      }
+    }
 
     if (CFG.pagamento.modo === 'mercadopago') {
       return finalizarMercadoPago(itens);
@@ -1056,6 +1152,8 @@
              ele mesmo guardou e cobra aquilo. */
           freteProtocolo: (Frete.ler() || {}).protocolo || '',
           freteServico: (Frete.ler() || {}).servico || '',
+
+          entrega: Entrega.ler(),
         }),
       });
 

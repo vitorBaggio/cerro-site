@@ -1252,3 +1252,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
   font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
   color: var(--terra-suave);
 }
+
+/* Formulário de entrega na sacola */
+.entrega { border: 0; padding: 0; margin: 0; display: grid; gap: .7rem; }
+.entrega legend { padding: 0; margin-bottom: .2rem; }
+.entrega__dupla { display: grid; grid-template-columns: 1fr auto; gap: .5rem; }
+.campo--junto { margin: 0; }
+.campo--curto input { width: 8ch; }
+@media (max-width: 520px) {
+  .entrega__dupla { grid-template-columns: 1fr; }
+  .campo--curto input { width: 100%; }
+}

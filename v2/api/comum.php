@@ -199,6 +199,26 @@ $CERRO_ENVIO = array(
   'pecas_por_caixa' => 4,
   'validade_min'    => 30,            // minutos que a cotação vale
 
+  /* --- Entrega local ------------------------------------------------------
+     Cuiabá e Várzea Grande têm frete fixo de R$ 10,00, definido pelo cliente.
+     Essa regra ganha de tudo, inclusive da cotação real: nessas duas cidades
+     a entrega é dele, não dos Correios, então cotar não faz sentido.
+
+     CONFIRA AS FAIXAS COM ELE. Estas são as faixas padrão dos Correios para
+     as duas cidades, mas quem mora lá sabe melhor do que uma tabela. Se a
+     faixa estiver larga demais, gente de fora paga R$ 10 e a loja banca a
+     diferença; estreita demais, vizinho paga frete de outro estado.
+     ---------------------------------------------------------------------- */
+  'local' => array(
+    'preco' => 10.00,
+    'prazo' => '1 a 2 dias úteis',
+    'nome'  => 'Entrega local',
+    'faixas' => array(
+      array(78000, 78109),   // Cuiabá
+      array(78110, 78169),   // Várzea Grande
+    ),
+  ),
+
   /* Tabela por região, saindo de Cuiabá. São valores POR CAIXA.
      PREENCHER com a tabela real do cliente: estes são um ponto de partida
      plausível, não uma cotação. Enquanto não houver token do intermediário,
@@ -212,6 +232,29 @@ $CERRO_ENVIO = array(
     'N'       => array('nome' => 'Norte',        'pac' => 39.90, 'sedex' => 69.90, 'prazo_pac' => '7 a 14','prazo_sedex' => '4 a 7'),
   ),
 );
+
+/** Este CEP é de Cuiabá ou Várzea Grande? */
+function cerro_e_local($cep) {
+  global $CERRO_ENVIO;
+  $n = (int) substr($cep, 0, 5);
+  foreach ($CERRO_ENVIO['local']['faixas'] as $f) {
+    if ($n >= $f[0] && $n <= $f[1]) return true;
+  }
+  return false;
+}
+
+/** A opção única da entrega local. Preço fixo, sem multiplicar por caixa:
+ *  é entrega própria, e levar duas caixas na mesma viagem não custa o dobro. */
+function cerro_opcao_local() {
+  global $CERRO_ENVIO;
+  $l = $CERRO_ENVIO['local'];
+  return array(array(
+    'servico' => 'LOCAL',
+    'nome'    => $l['nome'],
+    'preco'   => (float) $l['preco'],
+    'prazo'   => $l['prazo'],
+  ));
+}
 
 /** Região a partir do CEP, pelas faixas dos Correios por estado. */
 function cerro_regiao($cep) {
