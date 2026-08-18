@@ -42,6 +42,10 @@ return array(
      avulsas ainda não foram definidos: enquanto não estiverem aqui, elas não
      podem ser vendidas separadas, e é assim que tem que ser. Produto sem
      preço no servidor é produto que não existe. */
+  'florescer-coracao'       => array('nome' => 'Sabonete Coração Entrelaçado · Florescer Eterno', 'preco' => 45.00),
+  'florescer-mil-flores'    => array('nome' => 'Sabonete Mil Flores · Florescer Eterno', 'preco' => 35.00),
+  'florescer-esfoliante'    => array('nome' => 'Esfoliante Corporal Cristais Mágicos · Florescer Eterno', 'preco' => 80.00),
+  'florescer-geleia'        => array('nome' => 'Geleia de Banho Chuva de Brilho · Florescer Eterno', 'preco' => 80.00),
   'florescer-eterno-kit' => array('nome' => 'Ritual Florescer Eterno completo, 4 peças', 'preco' => 220.00),
 
   /* --- Combos ----------------------------------------------------------- */

@@ -237,7 +237,7 @@ window.CERRO_CATALOGO = {
         rotulo: 'Sabonete em barra',
         nome: 'Coração Entrelaçado',
         medida: '120 g',
-        preco: null,         // PREENCHER
+        preco: 45.00,         // PREENCHER
         foto: 'assets/img/florescer-coracao.jpg',
         ativos: 'Extrato de rosas brancas',
         texto: 'A maior barra da casa, 120 g, feita para durar o banho inteiro na mão. O extrato de rosas brancas limpa sem repuxar e deixa aquele toque macio que fica depois de enxaguar. O relevo quadriculado não é só enfeite: ele segura a espuma e dá pegada na barra molhada.',
@@ -248,7 +248,7 @@ window.CERRO_CATALOGO = {
         rotulo: 'Sabonete em barra',
         nome: 'Mil Flores',
         medida: '80 g',
-        preco: null,         // PREENCHER
+        preco: 35.00,         // PREENCHER
         foto: 'assets/img/florescer-mil-flores.jpg',
         ativos: 'Extrato de aveia',
         texto: 'A aveia é o ingrediente mais antigo que existe para banho de pele sensível, e continua sendo o melhor. Numa barra de 80 g com três flores em relevo, ela deixa a pele com um toque aveludado que já se sente antes de sair do chuveiro.',
@@ -259,7 +259,7 @@ window.CERRO_CATALOGO = {
         rotulo: 'Esfoliante corporal',
         nome: 'Cristais Mágicos',
         medida: '200 g',
-        preco: null,         // PREENCHER
+        preco: 80.00,         // PREENCHER
         foto: 'assets/img/florescer-esfoliante.jpg',
         ativos: 'Óleo de amêndoas e cristais de quartzo',
         texto: 'Cristais de quartzo moído fazem a esfoliação, removendo as células mortas da superfície. O óleo de amêndoas entra junto para a pele não sair ressecada, que é o que costuma acontecer com esfoliante. Sai a aspereza e fica o brilho.',
@@ -270,7 +270,7 @@ window.CERRO_CATALOGO = {
         rotulo: 'Geleia de banho',
         nome: 'Chuva de Brilho',
         medida: '200 ml',
-        preco: null,         // PREENCHER
+        preco: 80.00,         // PREENCHER
         foto: 'assets/img/florescer-geleia.jpg',
         ativos: 'Extrato de aveia e pó de pérola',
         texto: 'O pó de pérola faz o que o nome promete: deixa um brilho fino na pele, do tipo que só aparece quando a luz bate de lado. A aveia entra para o banho não ressecar. É a peça que fecha o ritual e a que mais dura.',
