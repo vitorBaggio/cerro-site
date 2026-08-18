@@ -602,65 +602,6 @@
 .ativos-cena span em { font-style: normal; color: var(--dourado); }
 
 /* ==========================================================================
-   EDIÇÃO DE PRESENTE · Florescer Eterno
-   Texto de um lado, as quatro peças do outro. Escura, emendando no Ato 5.
-   ========================================================================== */
-
-.presente { overflow: hidden; }
-
-.presente [data-cerro="presente"] {
-  display: grid;
-  gap: clamp(1.5rem, 3.5vw, 3rem);
-  justify-items: center;
-  text-align: center;
-}
-
-/* A imagem do conjunto tem exatamente o mesmo preto do fundo da seção, então
-   não leva moldura, borda, sombra nem canto arredondado. Qualquer uma dessas
-   coisas desenharia um retângulo onde não deve existir retângulo: o efeito
-   pretendido é as quatro peças aparecerem flutuando na própria seção. */
-.presente__conjunto {
-  margin: 0;
-  width: min(100%, 1240px);
-}
-/* A proporção também vai no CSS, e não só nos atributos da tag.
-
-   Nem todo navegador usa width/height de um <source> para reservar espaço;
-   aspect-ratio funciona em todos. Como as duas regras nascem do mesmo par de
-   arquivos, elas não podem divergir: mexeu no tamanho de um, mexe aqui.
-
-   As 700px têm que ser exatamente as mesmas do media da <source>. Se as duas
-   se desencontrarem, existe uma faixa de largura em que o navegador carrega
-   uma proporção e reserva a outra, que é justamente o defeito que isto
-   corrige. */
-.presente__conjunto img {
-  width: 100%; height: auto; display: block;
-  aspect-ratio: 1800 / 620;
-}
-@media (max-width: 700px) {
-  .presente__conjunto img { aspect-ratio: 1 / 1; }
-}
-
-.presente__texto .titulo-cena { margin: 0 0 1rem; }
-.presente__texto .legenda-cena {
-  margin: 0 auto 1.4rem;
-  max-width: 46ch;
-}
-
-.presente__essencias {
-  font-family: var(--serif); font-style: italic;
-  font-size: 1.05rem; color: var(--dourado);
-  margin: 0 0 2.2rem;
-}
-
-.presente__acao { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
-.presente__texto .etiqueta { justify-content: center; }
-
-@media (max-width: 860px) {
-  .presente__texto .legenda-cena { max-width: 34ch; }
-}
-
-/* ==========================================================================
    ATO 6 · Escolha
    Três painéis grandes. Aqui a apresentação vira loja.
    ========================================================================== */
@@ -710,4 +651,85 @@
   height: 100%; width: 0;
   background: linear-gradient(90deg, var(--barro), var(--dourado));
   transition: width 120ms linear;
+}
+
+/* ==========================================================================
+   EDIÇÃO DE PRESENTE · Florescer Eterno
+   --------------------------------------------------------------------------
+   Ato claro, entre o Ato 5 escuro e a loja. As quatro peças entram uma por
+   vez, cada uma na sua etapa, com o nome e a fala embaixo.
+
+   Por que claro, depois de duas tentativas escuras: as fotos vinham com
+   fundo quase preto e a seção também, contraste medido de 1,24. A peça
+   sumia dentro do próprio retângulo. Recortando o fundo, o retângulo deixa
+   de existir e o ato pode ser claro sem competir com nada.
+   ========================================================================== */
+
+.cena--presente { --altura: 280vh; }
+@media (max-width: 760px) { .cena--presente { --altura: 250vh; } }
+
+.cena--presente .cena__palco {
+  background:
+    radial-gradient(80% 60% at 50% 28%, rgba(199,147,85,.13), transparent 70%),
+    var(--areia);
+}
+
+.presente__pecas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(.6rem, 2vw, 2rem);
+  align-items: end;
+  width: min(100%, 1240px);
+  margin-inline: auto;
+}
+
+/* Cada peça sobe e aparece conforme a SUA etapa avança. A opacidade fecha
+   antes do movimento terminar, para a peça já estar legível enquanto ainda
+   assenta, em vez de chegar e só então acender. */
+.peca {
+  margin: 0;
+  text-align: center;
+  opacity: clamp(0, calc(var(--etapa) * 1.6), 1);
+  transform: translateY(calc((1 - var(--etapa)) * 46px));
+}
+
+.peca__figura {
+  display: flex; align-items: flex-end; justify-content: center;
+  height: clamp(120px, 22vh, 250px);
+  margin-bottom: 1rem;
+}
+.peca__figura img {
+  max-width: 100%; max-height: 100%; width: auto; height: auto;
+  /* drop-shadow segue o recorte; box-shadow desenharia um quadrado */
+  filter: drop-shadow(0 14px 18px rgba(58, 42, 32, .22));
+}
+
+.peca__nome {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(1rem, 1.7vw, 1.45rem);
+  margin: 0; line-height: 1.2;
+}
+.peca__meta {
+  font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--terra-suave); margin: .35rem 0 0;
+}
+.peca__fala {
+  font-family: var(--serif); font-style: italic;
+  font-size: .92rem; color: var(--barro);
+  margin: .5rem 0 0; line-height: 1.35;
+}
+
+.presente__chamada {
+  font-size: clamp(.98rem, 1.5vw, 1.15rem);
+  color: var(--terra-suave);
+  max-width: 46ch; margin: 0 auto 1.4rem;
+}
+.presente__acao { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+
+/* No celular, quatro numa linha dariam peças de uns 80px, que é selo de
+   correio. Duas por duas, cada uma respira. */
+@media (max-width: 760px) {
+  .presente__pecas { grid-template-columns: repeat(2, 1fr); gap: 1.2rem 1rem; }
+  .peca__figura { height: clamp(96px, 15vh, 150px); }
+  .peca__fala { display: none; }   /* a fala completa vive na página do ritual */
 }

@@ -333,46 +333,36 @@
       ? `<a class="btn" href="ritual-florescer-eterno.html">Ver o ritual · ${dinheiro(p.precoKit)}</a>`
       : `<a class="btn" href="ritual-florescer-eterno.html">Conhecer o ritual</a>`;
 
-    /* Imagem primeiro, texto embaixo.
+    /* As quatro peças, recortadas do fundo, subindo uma por vez.
 
-       A versão anterior era um mosaico de quatro fotos ao lado do texto, e
-       não funcionou: as fotos têm fundo quase preto e a seção também, com
-       contraste de 1,24 entre eles. Quatro quadrados boiando na mesma cor
-       leem como mancha, não como produto.
+       Duas tentativas antes desta falharam pelo mesmo motivo, e vale ficar
+       registrado: as fotos vinham com fundo quase preto e a seção também
+       era escura, contraste medido de 1,24 entre os dois. Primeiro tentei
+       mosaico de quatro fotos, depois uma imagem única montada por código.
+       Nos dois casos o retângulo escuro aparecia e a peça sumia dentro dele.
 
-       Agora é uma imagem só, montada a partir das mesmas quatro fotos com
-       base comum e fundo igualado. Como o fundo dela é o mesmo da seção, a
-       imagem não tem borda: ela se dissolve na seção e o que sobra na tela
-       são as quatro peças alinhadas, sem moldura nenhuma. É o contrário do
-       problema anterior, usando a mesma propriedade que o causou. */
-    alvo.innerHTML = `
-      <figure class="presente__conjunto">
-        <picture>
-          <!-- A largura e a altura vão TAMBÉM na fonte, e não só na img.
+       O que resolve não é ajustar o contraste, é tirar o fundo. Com PNG
+       transparente não existe retângulo para brigar com a seção, e aí o
+       ato pode ser claro. Cada peça entra na sua etapa, com o nome e a
+       fala embaixo, na mesma gramática do Ato 4. */
+    alvo.className = 'presente__pecas';
+    alvo.innerHTML = p.produtos.map((it, i) => `
+      <article class="peca" style="--etapa: var(--p${i + 1})">
+        <div class="peca__figura">
+          <img src="${esc(it.foto.replace('.jpg', '-recorte.png'))}" loading="lazy"
+               alt="${esc(it.nome)}, ${esc(it.rotulo.toLowerCase())} do Ritual Florescer Eterno">
+        </div>
+        <h3 class="peca__nome">${esc(it.nome)}</h3>
+        <p class="peca__meta">${esc(it.rotulo)} · ${esc(it.medida)}</p>
+        <p class="peca__fala">${esc(it.ativos)}</p>
+      </article>`).join('');
 
-               Sem elas, o navegador reserva espaço usando os atributos da
-               <img>, que descrevem a versão de computador, 2,9:1. No celular
-               quem carrega é esta fonte, que é 1:1. Medido: reservava 115px
-               e chegava com 334px, empurrando tudo abaixo em 219px no
-               instante em que a imagem terminava de carregar.
-
-               Isso fazia a página saltar no meio da rolagem e obrigava os
-               atos grudados a recalcular a geometria sobre um documento que
-               tinha se movido. Era essa a travada seguida de pulo. -->
-          <source media="(max-width: 700px)" width="1100" height="1100"
-                  srcset="assets/img/florescer-conjunto-movel.jpg">
-          <img width="1800" height="620" src="assets/img/florescer-conjunto.jpg" loading="lazy"
-               alt="As quatro peças do Ritual Florescer Eterno: sabonete Coração Entrelaçado, esfoliante corporal Cristais Mágicos, geleia de banho Chuva de Brilho e sabonete Mil Flores">
-        </picture>
-      </figure>
-
-      <div class="presente__texto">
-        <p class="etiqueta">${esc(p.subtitulo)}</p>
-        <h2 class="titulo-cena">Florescer <em>Eterno</em></h2>
-        <p class="legenda-cena">${esc(p.chamada)}</p>
-        <p class="presente__essencias">${esc(p.essencias)}</p>
-        <div class="presente__acao">${acao}</div>
-      </div>`;
+    const base = $('[data-cerro="presente-acao"]');
+    if (base) {
+      base.innerHTML = `
+        <p class="presente__chamada">${esc(p.chamada)}</p>
+        <div class="presente__acao">${acao}</div>`;
+    }
   }
 
   /** As quatro peças em detalhe, na página do Florescer Eterno. */
