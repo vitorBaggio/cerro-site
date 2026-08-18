@@ -123,10 +123,14 @@ window.CERRO_CONFIG = {
      ---------------------------------------------------------------------- */
   atendentes: {
     memoriaEmDias: 60,
+    /* O código é o que vai no link e no registro do pedido. Escolhi pelo
+       primeiro nome porque é o que a atendente reconhece ao compartilhar o
+       link dela. Se entrar outra Isabela algum dia, o código dela precisa
+       ser diferente, não o nome. */
     lista: [
-      { codigo: 'a1', nome: 'PREENCHER: nome da atendente 1' },
-      { codigo: 'a2', nome: 'PREENCHER: nome da atendente 2' },
-      { codigo: 'a3', nome: 'PREENCHER: nome da atendente 3' },
+      { codigo: 'duda',    nome: 'Maria Eduarda' },
+      { codigo: 'isabela', nome: 'Isabela' },
+      { codigo: 'nilma',   nome: 'Nilma' },
     ],
   },
 
