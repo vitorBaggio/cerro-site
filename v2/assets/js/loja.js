@@ -1220,8 +1220,22 @@
   }
 
   /** Modo WhatsApp: funciona sem backend. */
+  /** Modo WhatsApp: o pedido vira uma mensagem pronta.
+   *
+   *  A mensagem carrega TUDO que a sacola coletou: endereço, atendente,
+   *  cupom e serviço de frete. Antes ela levava só os itens e o total, e o
+   *  resto do checkout era coletado e descartado: a cliente preenchia o
+   *  endereço, escolhia a atendente, digitava o cupom, e nada disso chegava
+   *  do outro lado. A loja tinha que perguntar tudo de novo na conversa.
+   */
   function finalizarWhatsApp(itens) {
     const cliente = window.CerroContas && window.CerroContas.atual();
+    const entrega = Entrega.ler();
+    const cupom = Cupom.atual();
+    const desconto = Sacola.desconto();
+    const frete = Sacola.frete();
+    const opcaoFrete = Frete.escolhido();
+    const codAtendente = Atendente.atual();
 
     const linhas = itens.map((i) =>
       `• ${i.qtd}× ${i.nome}${i.ritual ? ' (' + i.ritual + ')' : ''}: ${dinheiro(i.preco * i.qtd)}`);
@@ -1232,16 +1246,40 @@
       linhas.join('\n'),
       '',
       `Subtotal: ${dinheiro(Sacola.subtotal())}`,
-      `Frete: ${Sacola.frete() === 0 ? 'Grátis' : dinheiro(Sacola.frete())}`,
-      `Total: ${dinheiro(Sacola.total())}`,
     ];
 
-    if (cliente) {
-      partes.push('', `Nome: ${cliente.nome}`, `E-mail: ${cliente.email}`);
-      if (cliente.whatsapp) partes.push(`WhatsApp: ${cliente.whatsapp}`);
+    if (desconto > 0) partes.push(`Desconto (${cupom.codigo}): -${dinheiro(desconto)}`);
+
+    partes.push(
+      `Frete${opcaoFrete ? ' (' + opcaoFrete.nome + ', ' + opcaoFrete.prazo + ')' : ''}: ` +
+        (frete === 0 ? 'Grátis' : dinheiro(frete)),
+      `Total: ${dinheiro(Sacola.total())}`
+    );
+
+    /* Endereço: é o que permite despachar sem uma segunda conversa. */
+    const temEndereco = entrega && (entrega.nome || entrega.rua);
+    if (temEndereco) {
+      const linhaRua = [entrega.rua, entrega.numero].filter(Boolean).join(', ');
+      partes.push(
+        '',
+        'ENTREGA',
+        entrega.nome || '',
+        [linhaRua, entrega.complemento].filter(Boolean).join(' · '),
+        [entrega.bairro, (Frete.ler() || {}).cep].filter(Boolean).join(' · '),
+        entrega.whatsapp ? `WhatsApp: ${entrega.whatsapp}` : ''
+      );
     }
 
-    const url = `https://wa.me/${CFG.loja.whatsapp}?text=${encodeURIComponent(partes.join('\n'))}`;
+    if (codAtendente) {
+      partes.push('', `Atendida por: ${Atendente.nomeDe(codAtendente)}`);
+    }
+
+    if (cliente) {
+      partes.push('', `Conta: ${cliente.nome} · ${cliente.email}`);
+    }
+
+    const texto = partes.filter((l) => l !== '' || true).join('\n').replace(/\n{3,}/g, '\n\n');
+    const url = `https://wa.me/${CFG.loja.whatsapp}?text=${encodeURIComponent(texto)}`;
     window.open(url, '_blank', 'noopener');
   }
 
