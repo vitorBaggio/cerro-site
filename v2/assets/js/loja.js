@@ -543,7 +543,7 @@
     if (!alvo) return;
 
     const p = CAT.presente;
-    alvo.className = 'pecas-presente aparece--fila';
+    alvo.className = 'pecas-presente aparece aparece--fila';
     alvo.innerHTML = p.produtos.map((it) => `
       <article class="peca-detalhe">
         <div class="peca-detalhe__figura">
@@ -1483,7 +1483,13 @@
 
   function revelarAoRolar() {
     const querParado = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const alvos = $$('.aparece');
+    /* As duas classes, e nao so '.aparece'. Um bloco marcado apenas como
+       'aparece--fila' nunca receberia '.visto', e o CSS deixa os filhos em
+       opacity 0 esperando por ela: a secao some sem erro no console e sem
+       aviso nenhum. Foi o que aconteceu com as pecas do Florescer Eterno.
+       Aceitar as duas aqui e mais barato que confiar em ninguem esquecer
+       uma palavra na classe. */
+    const alvos = $$('.aparece, .aparece--fila');
 
     if (querParado || !('IntersectionObserver' in window)) {
       alvos.forEach((el) => el.classList.add('visto'));
