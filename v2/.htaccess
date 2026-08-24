@@ -1,0 +1,96 @@
+# ==========================================================================
+# Cerro - Banho do Cerrado
+# Sem recuo em nenhuma linha: o editor do cPanel repete o recuo da linha
+# anterior, e um arquivo indentado sai torto quando editado por la.
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# 1. Qual arquivo abre quando alguem digita so o dominio
+# --------------------------------------------------------------------------
+# A HostGator entrega index.php antes de index.html. Esta conta tem sobra
+# do Criador de Sites (index.php, composer.json, vendor/), entao sem esta
+# linha o visitante cairia naquele sistema e nao na loja.
+DirectoryIndex index.html index.php
+
+# --------------------------------------------------------------------------
+# 2. Nada de listar pastas
+# --------------------------------------------------------------------------
+Options -Indexes
+
+# --------------------------------------------------------------------------
+# 3. Arquivos que nunca devem ser baixados
+# --------------------------------------------------------------------------
+# O pacote de instalacao costuma ficar esquecido no public_html depois do
+# upload. Enquanto estiver la, o site inteiro e baixavel por quem souber o
+# nome. Bloquear e a rede de seguranca; apagar continua sendo o certo.
+<FilesMatch "\.(zip|tar|gz|bak|sql|log|md|ps1|lock)$">
+<IfModule mod_authz_core.c>
+Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+Order allow,deny
+Deny from all
+</IfModule>
+</FilesMatch>
+
+# --------------------------------------------------------------------------
+# 4. Sempre https
+# --------------------------------------------------------------------------
+# O checkout do Mercado Pago nao abre em pagina http, e o navegador marca o
+# site como nao seguro justo na hora de pedir endereco.
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# --------------------------------------------------------------------------
+# 5. Cache
+# --------------------------------------------------------------------------
+# Imagem e fonte quase nunca mudam: um ano. HTML, CSS e JS ficam curtos para
+# a cliente nao ver versao velha depois de uma correcao.
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType image/jpeg "access plus 1 year"
+ExpiresByType image/png "access plus 1 year"
+ExpiresByType image/webp "access plus 1 year"
+ExpiresByType image/svg+xml "access plus 1 year"
+ExpiresByType text/css "access plus 1 hour"
+ExpiresByType application/javascript "access plus 1 hour"
+ExpiresByType text/html "access plus 5 minutes"
+</IfModule>
+
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json image/svg+xml
+</IfModule>
+
+# --------------------------------------------------------------------------
+# 6. Cabecalhos de seguranca
+# --------------------------------------------------------------------------
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# --------------------------------------------------------------------------
+# 7. Pagina de erro
+# --------------------------------------------------------------------------
+ErrorDocument 404 /404.html
+
+# ==========================================================================
+# O que estava aqui antes, e por que saiu
+# --------------------------------------------------------------------------
+# Este arquivo pertencia ao Criador de Sites da HostGator (#HG-BUILDER#).
+# A regra abaixo mandava toda requisicao que nao fosse um arquivo existente
+# para o index.php do construtor. Efeito pratico: as paginas internas do
+# site abriam (sao arquivos que existem), mas quem digitasse so o dominio
+# caia no construtor. Ou seja, justo a porta de entrada ia para o lugar
+# errado. Guardado aqui caso alguem precise entender o historico.
+#
+# RewriteBase /
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond $0#%{REQUEST_URI} ([^#]*)#(.*)\1$
+# RewriteRule ^.*$ %2index.php?page=$0&%{QUERY_STRING} [QSA,L]
+# ==========================================================================
