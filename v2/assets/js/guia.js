@@ -39,7 +39,7 @@
       opcoes: [
         { texto: 'Acalmar e desacelerar',   detalhe: 'Terminar o dia em paz',        ritual: 'pureza-nativa' },
         { texto: 'Devolver viço e brilho',  detalhe: 'Pele luminosa outra vez',      ritual: 'despertar-da-terra' },
-        { texto: 'Regenerar e purificar',   detalhe: 'Cuidado profundo',             ritual: 'sol-do-cerrado' },
+        { texto: 'Firmeza e limpeza a fundo', detalhe: 'Cuidado profundo',           ritual: 'sol-do-cerrado' },
       ],
     },
     {
@@ -59,7 +59,7 @@
   const JUSTIFICATIVA = {
     'pureza-nativa':      'É o mais silencioso da casa. Óleo de algodão, argila branca e leite de cabra devolvem a hidratação que a sua pele está pedindo, sem nenhuma aspereza.',
     'despertar-da-terra': 'Foi formulado justamente para peles que reagem a tudo. Hibisco, rosa mosqueta e argila rosa devolvem luminosidade fazendo limpeza profunda, sem agredir.',
-    'sol-do-cerrado':     'É a fórmula mais potente da casa. Barbatimão, copaíba e argila vermelha trabalham regeneração e firmeza, com o frescor do capim-limão.',
+    'sol-do-cerrado':     'É a fórmula mais potente da casa. Barbatimão, copaíba e argila vermelha limpam a fundo e deixam o toque firme, com o frescor do capim-limão.',
   };
 
   function montar() {

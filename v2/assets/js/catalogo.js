@@ -46,7 +46,7 @@ window.CERRO_CATALOGO = {
           medida: '80 g',
           preco: 28.00,
           ativos: 'Extrato de rosas, extrato de frutas vermelhas e argila rosa',
-          texto: 'Um banho de luminosidade e suavidade. Combinando o poder antioxidante das frutas vermelhas, a regeneração celular do extrato de rosas e o toque detox da argila rosa, este sabonete limpa e nutre sem ressecar, e ainda estimula a circulação sanguínea. A pele fica macia, firme e com o brilho natural que ela merece.',
+          texto: 'Um banho de luminosidade e suavidade. As frutas vermelhas, o extrato de rosas e a argila rosa se encontram num sabonete que limpa e nutre sem ressecar. A espuma é fina, o aroma fica na pele depois do banho, e o toque é macio e firme, com o brilho natural que ela merece.',
         },
         {
           id: 'despertar-sais',
@@ -56,7 +56,7 @@ window.CERRO_CATALOGO = {
           medida: '200 g',
           preco: 45.00,
           ativos: 'Óleo de rosa mosqueta e flores de hibisco',
-          texto: 'Um dos mais poderosos regeneradores naturais para a pele. O óleo de rosa mosqueta é rico em ácidos graxos essenciais e vitaminas: atua profundamente na hidratação, suaviza manchas e cicatrizes e devolve elasticidade e viço ao corpo. As flores de hibisco, infundidas na água quente, entregam uma esfoliação delicada.',
+          texto: 'Um dos óleos mais valorizados do cuidado natural. O óleo de rosa mosqueta é rico em ácidos graxos essenciais e vitaminas, e deixa o corpo hidratado, macio e com viço. As flores de hibisco, infundidas na água quente, entregam uma esfoliação delicada.',
         },
         {
           id: 'despertar-geleia',
@@ -66,7 +66,7 @@ window.CERRO_CATALOGO = {
           medida: '350 ml',
           preco: 60.00,
           ativos: 'Extrato de hibisco',
-          texto: 'Chamado de "botox vegetal", o extrato de hibisco é altamente tonificante, antioxidante e purificante. Melhora a elasticidade, controla a oleosidade, auxilia na uniformização do tom da pele e entrega um frescor revigorante que desperta os sentidos.',
+          texto: 'O extrato de hibisco é conhecido no cuidado natural pelo toque tonificante que deixa na pele. Em formulação de geleia, ele desliza no banho, limpa sem pesar, deixa a pele uniforme ao toque e entrega um frescor revigorante que desperta os sentidos.',
         },
       ],
     },
@@ -100,7 +100,7 @@ window.CERRO_CATALOGO = {
           medida: '80 g',
           preco: 28.00,
           ativos: 'Óleo de algodão e argila branca',
-          texto: 'Um banho de suavidade e restauração profunda. O óleo de algodão é antioxidante e altamente hidratante; a argila branca é renovadora celular, não resseca e uniformiza o tom da pele, com clareamento leve de manchas. Juntos, formam um par notável contra o envelhecimento: limpa e protege sem ressecar.',
+          texto: 'Um banho de suavidade profunda. O óleo de algodão é altamente hidratante; a argila branca limpa sem ressecar e deixa o toque uniforme. Juntos, formam o par mais delicado da casa: limpa e protege sem tirar a maciez.',
         },
         {
           id: 'pureza-sais',
@@ -110,7 +110,7 @@ window.CERRO_CATALOGO = {
           medida: '200 g',
           preco: 45.00,
           ativos: 'Óleo de amêndoas e flores de camomila',
-          texto: 'O óleo de amêndoas cria uma película protetora sobre a pele, evita a perda de hidratação e nutre com vitaminas A, B e E e ácidos graxos, ajudando a prevenir estrias e ressecamento. As flores secas de camomila somam ao sal de epsom e ao bicarbonato no relaxamento do corpo.',
+          texto: 'O óleo de amêndoas cria uma película protetora sobre a pele, ajuda a manter a hidratação e nutre com vitaminas A, B e E e ácidos graxos, deixando o corpo macio por mais tempo. As flores secas de camomila somam ao sal de epsom e ao bicarbonato no relaxamento do corpo.',
         },
         {
           id: 'pureza-geleia',
@@ -120,7 +120,7 @@ window.CERRO_CATALOGO = {
           medida: '350 ml',
           preco: 60.00,
           ativos: 'Extrato de amêndoas e extrato de leite de cabra',
-          texto: 'O extrato de amêndoas e o leite de cabra formam uma sinergia máxima de nutrição e aconchego. O primeiro trabalha a elasticidade, evita ressecamentos e estimula a renovação da pele; o segundo acalma peles irritadas, hidrata e suaviza manchas. Um toque aveludado que devolve leveza ao corpo.',
+          texto: 'O extrato de amêndoas e o leite de cabra formam uma sinergia de nutrição e aconchego. O primeiro mantém a pele nutrida e macia; o segundo acalma, hidrata e deixa o toque uniforme. Um toque aveludado que devolve leveza ao corpo.',
         },
       ],
     },
@@ -135,13 +135,13 @@ window.CERRO_CATALOGO = {
       cor: '#C08B45',
       foto: 'assets/img/ritual-sol-do-cerrado.jpg',
 
-      chamada: 'Barbatimão, copaíba e argila vermelha. O ritual mais potente do Cerrado, para quem busca regeneração de verdade.',
+      chamada: 'Barbatimão, copaíba e argila vermelha. O ritual mais potente do Cerrado, para quem busca o banho mais intenso da casa.',
 
-      historia: 'O barbatimão é chamado de "árvore que fecha feridas" há gerações. A copaíba, de bálsamo do mato. O Ritual Sol do Cerrado reúne os dois com o capim-limão e a argila vermelha na fórmula mais potente da casa: um banho de força e regeneração, que purifica em profundidade e devolve firmeza ao corpo.',
+      historia: 'O barbatimão é chamado de "árvore que fecha feridas" há gerações. A copaíba, de bálsamo do mato. O Ritual Sol do Cerrado reúne os dois com o capim-limão e a argila vermelha na fórmula mais potente da casa: um banho de força e caráter, que limpa em profundidade e deixa o corpo firme ao toque.',
 
-      paraQuem: 'Peles que pedem regeneração, purificação profunda e recuperação da firmeza.',
+      paraQuem: 'Peles que pedem limpeza profunda e um toque firme e revigorado.',
 
-      promessaKit: 'O ritual completo foi elaborado para rejuvenescer a pele, tonificar e promover uma limpeza profunda, sem abrir mão do frescor.',
+      promessaKit: 'O ritual completo é o mais intenso da casa: limpa a fundo, tonifica e deixa o toque firme, sem abrir mão do frescor.',
 
       ativos: ['Extrato de barbatimão', 'Argila vermelha', 'Óleo de copaíba', 'Sementes de erva-doce', 'Capim-limão'],
 
@@ -154,7 +154,7 @@ window.CERRO_CATALOGO = {
           medida: '80 g',
           preco: 28.00,
           ativos: 'Extrato de barbatimão e argila vermelha',
-          texto: 'Um banho de força e regeneração intensa. O extrato de barbatimão é adstringente e purificante; a argila vermelha é estimulante e renovadora, favorecendo a firmeza da pele. Limpa e purifica profundamente sem ressecar, deixando a pele macia, firme e com o vigor natural que ela merece.',
+          texto: 'Um banho de força e caráter. O extrato de barbatimão é adstringente; a argila vermelha limpa a fundo e deixa o toque firme. Limpa e purifica profundamente sem ressecar, deixando a pele macia, firme e com o vigor natural que ela merece.',
         },
         {
           id: 'sol-sais',
@@ -164,7 +164,7 @@ window.CERRO_CATALOGO = {
           medida: '200 g',
           preco: 45.00,
           ativos: 'Óleo de copaíba e sementes de erva-doce',
-          texto: 'Um bálsamo do bioma. O óleo de copaíba é rico em ativos naturais que auxiliam na recuperação e no alívio de peles sensibilizadas, melhorando a resposta da pele e devolvendo energia e brilho. As sementes de erva-doce, infundidas na água quente, oferecem benefícios calmantes.',
+          texto: 'Um bálsamo do bioma. O óleo de copaíba é rico em ativos naturais e tem um toque suave, que devolve energia e brilho mesmo às peles mais delicadas. As sementes de erva-doce, infundidas na água quente, oferecem benefícios calmantes.',
         },
         {
           id: 'sol-geleia',
@@ -174,7 +174,7 @@ window.CERRO_CATALOGO = {
           medida: '350 ml',
           preco: 60.00,
           ativos: 'Extrato de barbatimão',
-          texto: 'Um dos mais potentes tesouros do nosso bioma. Em formulação em gel, o extrato de barbatimão tem sua ação purificante ainda mais evidente: auxilia na regeneração e na defesa da pele, estimula a firmeza do tecido e entrega um frescor revigorante que desperta os sentidos.',
+          texto: 'Um dos mais potentes tesouros do nosso bioma. Em formulação em gel, o extrato de barbatimão tem sua ação adstringente ainda mais evidente: limpa a fundo, deixa a pele com o toque firme e entrega um frescor revigorante que desperta os sentidos.',
         },
       ],
     },
