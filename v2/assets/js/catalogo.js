@@ -230,6 +230,22 @@ window.CERRO_CATALOGO = {
     precoKit: 220.00,        // informado pelo cliente
     medida: '4 peças',
 
+    /* Link de pagamento do Mercado Pago, criado no painel do cliente.
+     *
+     * Serve como atalho enquanto a integração completa não está no ar: a
+     * cliente paga na hora, sem conversa. Só é honesto porque o valor bate
+     * com o que o site cobraria: R$ 220 de produto e frete grátis, porque
+     * o kit passa do limite de R$ 200.
+     *
+     * ATENÇÃO ao mexer no preço do kit ou no limite do frete grátis: se os
+     * dois deixarem de bater, o link passa a cobrar valor diferente do que
+     * a cliente viu na sacola. Gere um link novo no painel e troque aqui.
+     *
+     * O que o link NÃO faz: não coleta endereço, não registra atendente e
+     * não aceita cupom. Por isso ele é botão secundário, nunca o principal.
+     */
+    linkPagamento: 'https://mpago.la/2AYxByk',
+
     produtos: [
       {
         id: 'florescer-coracao',

@@ -580,7 +580,14 @@
         <p class="caixa-compra__rotulo">Ritual completo, 4 peças</p>
         <p class="caixa-compra__preco">${dinheiro(p.precoKit)}</p>
         <ul class="caixa-compra__lista">${lista}</ul>
-        <button class="btn btn--largo" type="button" data-cerro="comprar-presente">Adicionar à sacola</button>`;
+        <button class="btn btn--largo" type="button" data-cerro="comprar-presente">Adicionar à sacola</button>
+        ${p.linkPagamento ? `
+          <a class="btn btn--vazado btn--largo" style="margin-top:.7rem"
+             href="${esc(p.linkPagamento)}" target="_blank" rel="noopener">Pagar agora</a>
+          <p class="caixa-compra__nota">
+            No pagamento direto a gente confirma o endereço com você pelo WhatsApp.
+            Para calcular frete, usar cupom ou levar mais de uma peça, use a sacola.
+          </p>` : ''}`;
 
       /* O id tem que ser o mesmo de api/catalogo.php, senão o servidor
          recusa o pedido com "produto não encontrado" na hora de pagar. */
