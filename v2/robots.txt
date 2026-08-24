@@ -1,5 +1,5 @@
 # Cerrô · Banho do Cerrado
-# Trocar SEUDOMINIO pelo endereço real antes de publicar.
+# Domínio: cerrodocerrado.com
 
 User-agent: *
 Allow: /
@@ -9,4 +9,4 @@ Disallow: /carrinho.html
 Disallow: /conta.html
 Disallow: /404.html
 
-Sitemap: https://SEUDOMINIO.com.br/sitemap.xml
+Sitemap: https://cerrodocerrado.com/sitemap.xml

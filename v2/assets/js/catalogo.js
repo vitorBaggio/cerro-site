@@ -87,7 +87,7 @@ window.CERRO_CATALOGO = {
 
       paraQuem: 'Peles secas e sensíveis, que requerem cuidado extra e hidratação intensa.',
 
-      promessaKit: 'O ritual completo promove a renovação celular de forma suave, combatendo o envelhecimento e as manchas. A pele fica macia por mais tempo e é acalmada.',
+      promessaKit: 'O ritual completo é o mais silencioso da casa: limpa, hidrata e acalma sem pressa. A pele fica macia por mais tempo, e o aroma de baunilha e sândalo fica junto.',
 
       ativos: ['Óleo de algodão', 'Argila branca', 'Óleo de amêndoas', 'Flores de camomila', 'Extrato de amêndoas', 'Leite de cabra'],
 
