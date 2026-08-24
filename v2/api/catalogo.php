@@ -20,34 +20,34 @@
 return array(
 
   /* --- Peças avulsas --------------------------------------------------- */
-  'despertar-sabonete' => array('nome' => 'Sabonete Brisa Rosada · Despertar da Terra',      'preco' => 28.00),
-  'despertar-sais'     => array('nome' => 'Sais Pétalas do Deserto · Despertar da Terra',    'preco' => 45.00),
-  'despertar-geleia'   => array('nome' => 'Geleia Néctar Suave · Despertar da Terra',        'preco' => 60.00),
+  'despertar-sabonete' => array('nome' => 'Sabonete Brisa Rosada · Despertar da Terra',      'preco' => 28.00, 'pecas' => 1),
+  'despertar-sais'     => array('nome' => 'Sais Pétalas do Deserto · Despertar da Terra',    'preco' => 45.00, 'pecas' => 1),
+  'despertar-geleia'   => array('nome' => 'Geleia Néctar Suave · Despertar da Terra',        'preco' => 60.00, 'pecas' => 1),
 
-  'pureza-sabonete'    => array('nome' => 'Sabonete Toque de Algodão · Pureza Nativa',       'preco' => 28.00),
-  'pureza-sais'        => array('nome' => 'Sais Nuvem de Areia · Pureza Nativa',             'preco' => 45.00),
-  'pureza-geleia'      => array('nome' => 'Geleia Orvalho da Alvorada · Pureza Nativa',      'preco' => 60.00),
+  'pureza-sabonete'    => array('nome' => 'Sabonete Toque de Algodão · Pureza Nativa',       'preco' => 28.00, 'pecas' => 1),
+  'pureza-sais'        => array('nome' => 'Sais Nuvem de Areia · Pureza Nativa',             'preco' => 45.00, 'pecas' => 1),
+  'pureza-geleia'      => array('nome' => 'Geleia Orvalho da Alvorada · Pureza Nativa',      'preco' => 60.00, 'pecas' => 1),
 
-  'sol-sabonete'       => array('nome' => 'Sabonete Frescor do Amanhecer · Sol do Cerrado',  'preco' => 28.00),
-  'sol-sais'           => array('nome' => 'Sais Pôr do Sol · Sol do Cerrado',                'preco' => 45.00),
-  'sol-geleia'         => array('nome' => 'Geleia Gotas de Ouro · Sol do Cerrado',           'preco' => 60.00),
+  'sol-sabonete'       => array('nome' => 'Sabonete Frescor do Amanhecer · Sol do Cerrado',  'preco' => 28.00, 'pecas' => 1),
+  'sol-sais'           => array('nome' => 'Sais Pôr do Sol · Sol do Cerrado',                'preco' => 45.00, 'pecas' => 1),
+  'sol-geleia'         => array('nome' => 'Geleia Gotas de Ouro · Sol do Cerrado',           'preco' => 60.00, 'pecas' => 1),
 
   /* --- Rituais completos ----------------------------------------------- */
-  'despertar-da-terra-kit' => array('nome' => 'Ritual Despertar da Terra completo, 3 peças', 'preco' => 120.00),
-  'pureza-nativa-kit'      => array('nome' => 'Ritual Pureza Nativa completo, 3 peças',      'preco' => 120.00),
-  'sol-do-cerrado-kit'     => array('nome' => 'Ritual Sol do Cerrado completo, 3 peças',     'preco' => 120.00),
+  'despertar-da-terra-kit' => array('nome' => 'Ritual Despertar da Terra completo, 3 peças', 'preco' => 120.00, 'pecas' => 3),
+  'pureza-nativa-kit'      => array('nome' => 'Ritual Pureza Nativa completo, 3 peças',      'preco' => 120.00, 'pecas' => 3),
+  'sol-do-cerrado-kit'     => array('nome' => 'Ritual Sol do Cerrado completo, 3 peças',     'preco' => 120.00, 'pecas' => 3),
 
   /* --- Edição de presente ------------------------------------------------
      Fora da trinca. Quatro peças, vendido como conjunto. Os preços das peças
      avulsas ainda não foram definidos: enquanto não estiverem aqui, elas não
      podem ser vendidas separadas, e é assim que tem que ser. Produto sem
      preço no servidor é produto que não existe. */
-  'florescer-coracao'       => array('nome' => 'Sabonete Coração Entrelaçado · Florescer Eterno', 'preco' => 45.00),
-  'florescer-mil-flores'    => array('nome' => 'Sabonete Mil Flores · Florescer Eterno', 'preco' => 35.00),
-  'florescer-esfoliante'    => array('nome' => 'Esfoliante Corporal Cristais Mágicos · Florescer Eterno', 'preco' => 80.00),
-  'florescer-geleia'        => array('nome' => 'Geleia de Banho Chuva de Brilho · Florescer Eterno', 'preco' => 80.00),
-  'florescer-eterno-kit' => array('nome' => 'Ritual Florescer Eterno completo, 4 peças', 'preco' => 220.00),
+  'florescer-coracao'       => array('nome' => 'Sabonete Coração Entrelaçado · Florescer Eterno', 'preco' => 45.00, 'pecas' => 1),
+  'florescer-mil-flores'    => array('nome' => 'Sabonete Mil Flores · Florescer Eterno', 'preco' => 35.00, 'pecas' => 1),
+  'florescer-esfoliante'    => array('nome' => 'Esfoliante Corporal Cristais Mágicos · Florescer Eterno', 'preco' => 80.00, 'pecas' => 1),
+  'florescer-geleia'        => array('nome' => 'Geleia de Banho Chuva de Brilho · Florescer Eterno', 'preco' => 80.00, 'pecas' => 1),
+  'florescer-eterno-kit' => array('nome' => 'Ritual Florescer Eterno completo, 4 peças', 'preco' => 220.00, 'pecas' => 4),
 
   /* --- Combos ----------------------------------------------------------- */
-  'trio-sabonetes'     => array('nome' => 'Trio de Sabonetes, um de cada ritual',            'preco' => 84.00),
+  'trio-sabonetes'     => array('nome' => 'Trio de Sabonetes, um de cada ritual',            'preco' => 84.00, 'pecas' => 3),
 );

@@ -42,20 +42,38 @@ if (strlen($cep) !== 8) {
 }
 
 /* --- Quantas caixas ----------------------------------------------------
-   Sem peso por peça, uso a conta que o próprio kit dá: um kit são três ou
-   quatro peças e cabe numa caixa. Então quatro unidades por caixa, sempre
-   arredondando para cima. Conservador de propósito: errar para mais custa
-   frete a mais; errar para menos custa a encomenda voltar. */
-$unidades = 0;
+   Conta PEÇAS, não linhas da sacola. A diferença não é preciosismo: um kit
+   é um id só, com quantidade 1, mas ocupa três peças dentro da caixa. Se
+   eu contasse a quantidade da linha, duas unidades do mesmo kit dariam
+   ceil(2/4) = 1 caixa, quando na verdade são seis peças e precisam de
+   duas. A loja bancaria a segunda caixa, e justo em quem compra mais.
+
+   Quanto cada id ocupa está em catalogo.php, junto do preço, porque é a
+   mesma tabela de verdade: id não vendável não tem preço nem peça. Item
+   sem 'pecas' declarado conta como 1, que é o caso de qualquer peça
+   avulsa e o padrão seguro para um id novo que alguém esqueça de marcar.
+
+   Quatro peças por caixa, sempre arredondando para cima. Conservador de
+   propósito: errar para mais custa frete a mais; errar para menos custa a
+   encomenda voltar. */
+$catalogo_frete = include __DIR__ . '/catalogo.php';
+
+$pecas = 0;
 if (!empty($dados['itens']) && is_array($dados['itens'])) {
   foreach ($dados['itens'] as $it) {
-    $q = isset($it['qtd']) ? (int) $it['qtd'] : 0;
-    if ($q > 0 && $q <= $CERRO_LOJA['max_qtd_por_item']) $unidades += $q;
+    $id = isset($it['id']) ? (string) $it['id'] : '';
+    $q  = isset($it['qtd']) ? (int) $it['qtd'] : 0;
+    if ($q < 1 || $q > $CERRO_LOJA['max_qtd_por_item']) continue;
+    if ($id === '' || !isset($catalogo_frete[$id])) continue;   // id que não existe não ocupa caixa
+
+    $por_item = isset($catalogo_frete[$id]['pecas']) ? (int) $catalogo_frete[$id]['pecas'] : 1;
+    if ($por_item < 1) $por_item = 1;
+    $pecas += $q * $por_item;
   }
 }
-if ($unidades < 1) cerro_responder(400, array('erro' => 'Sacola vazia.'));
+if ($pecas < 1) cerro_responder(400, array('erro' => 'Sacola vazia.'));
 
-$caixas = (int) ceil($unidades / $CERRO_ENVIO['pecas_por_caixa']);
+$caixas = (int) ceil($pecas / $CERRO_ENVIO['pecas_por_caixa']);
 if ($caixas > 10) cerro_responder(400, array('erro' => 'Pedido grande demais para cotar aqui.'));
 
 
@@ -93,7 +111,7 @@ cerro_guardar_cotacao($protocolo, array(
   'quando'   => time(),
   'cep'      => $cep,
   'caixas'   => $caixas,
-  'unidades' => $unidades,
+  'pecas'    => $pecas,
   'origem'   => $origem,
   'opcoes'   => $opcoes,
 ));
@@ -101,6 +119,7 @@ cerro_guardar_cotacao($protocolo, array(
 cerro_responder(200, array(
   'protocolo' => $protocolo,
   'caixas'    => $caixas,
+  'pecas'     => $pecas,
   'origem'    => $origem,
   'opcoes'    => $opcoes,
 ));
