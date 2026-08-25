@@ -221,9 +221,9 @@ window.CERRO_CATALOGO = {
     cor: '#C58A72',
     foto: 'assets/img/florescer-coracao.jpg',
 
-    chamada: 'Quatro peças que chegam prontas para entregar. A única linha da casa que não segue a trinca, porque presente não se divide em três.',
+    chamada: 'Quatro peças pensadas para transformar o banho em celebração. A única linha da casa que vai além dos três rituais clássicos — porque a arte de presentear merece a perfeição de quatro gestos.',
 
-    historia: 'Nem todo banho é rotina. Alguns são data marcada. O Florescer Eterno nasceu para esses: rosas brancas, chá branco e lichia numa mesma alquimia, em quatro peças pensadas para serem dadas de presente. É a linha em que a Cerrô se permite o gesto, não só o cuidado.',
+    historia: 'Há rituais que cuidam do corpo, e há rituais que eternizam sentimentos. O Florescer Eterno nasce do desejo de transformar o afeto em uma experiência viva, tátil e inesquecível, desenhando um caminho de pura contemplação. Da espuma cremosa ao brilho delicado do pó de pérolas e ao polimento suave dos microcristais de quartzo, o Florescer Eterno convida a pele a renovar-se e a alma a pausar. Não é apenas sobre um banho; é sobre oferecer um tempo suspenso, um abraço em forma de cuidado e a celebração de um desabrochar que nunca cessa.',
 
     paraQuem: 'Quem vai presentear e quer entregar algo que já chega pronto, sem precisar montar nada.',
 
