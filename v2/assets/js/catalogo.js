@@ -232,8 +232,10 @@ window.CERRO_CATALOGO = {
 
     /* Link de pagamento do Mercado Pago, criado no painel do cliente.
      *
-     * Serve como atalho enquanto a integração completa não está no ar: a
-     * cliente paga na hora, sem conversa. Só é honesto porque o valor bate
+     * NENHUM BOTÃO DO SITE USA ISTO. Servia de atalho, mas pulava a sacola:
+     * sem endereço, sem frete, sem cupom e sem atendente. Quem clicava pagava
+     * certo e a loja ficava sem saber para onde enviar. Fica guardado aqui
+     * para mandar à mão pelo WhatsApp quando fizer sentido. O valor bate
      * com o que o site cobraria: R$ 220 de produto e frete grátis, porque
      * o kit passa do limite de R$ 200.
      *

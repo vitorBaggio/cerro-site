@@ -581,18 +581,26 @@
         <p class="caixa-compra__preco">${dinheiro(p.precoKit)}</p>
         <ul class="caixa-compra__lista">${lista}</ul>
         <button class="btn btn--largo" type="button" data-cerro="comprar-presente">Adicionar à sacola</button>
-        ${p.linkPagamento ? `
-          <a class="btn btn--vazado btn--largo" style="margin-top:.7rem"
-             href="${esc(p.linkPagamento)}" target="_blank" rel="noopener">Pagar agora</a>
-          <p class="caixa-compra__nota">
-            No pagamento direto a gente confirma o endereço com você pelo WhatsApp.
-            Para calcular frete, usar cupom ou levar mais de uma peça, use a sacola.
-          </p>` : ''}`;
+        <button class="btn btn--vazado btn--largo" style="margin-top:.7rem"
+                type="button" data-cerro="comprar-presente-agora">Comprar agora</button>
+        <p class="caixa-compra__nota">
+          "Comprar agora" põe o ritual na sacola e te leva direto para lá, onde
+          você calcula o frete, usa cupom e diz quem te atendeu.
+        </p>`;
 
       /* O id tem que ser o mesmo de api/catalogo.php, senão o servidor
          recusa o pedido com "produto não encontrado" na hora de pagar. */
+      /* Dois botões, um caminho só. "Comprar agora" faz o mesmo que "Adicionar
+         à sacola" e ainda leva a pessoa para lá, com o ritual já dentro.
+
+         Antes esse segundo botão apontava para um link avulso do Mercado Pago.
+         Funcionava, mas pulava a sacola inteira: sem endereço, sem frete, sem
+         cupom e sem registrar a atendente. Quem clicava pagava certo e a loja
+         ficava sem saber para onde enviar. */
       alvo.addEventListener('click', (ev) => {
-        if (!ev.target.closest('[data-cerro="comprar-presente"]')) return;
+        const agora = ev.target.closest('[data-cerro="comprar-presente-agora"]');
+        const naSacola = ev.target.closest('[data-cerro="comprar-presente"]');
+        if (!agora && !naSacola) return;
         Sacola.adicionar({
           id: p.slug + '-kit',
           nome: 'Ritual completo',
@@ -603,6 +611,7 @@
           foto: p.foto,
           qtd: 1,
         });
+        if (agora) { window.location.href = 'carrinho.html'; return; }
         avisar('Ritual Florescer Eterno adicionado à sacola');
       });
       return;
