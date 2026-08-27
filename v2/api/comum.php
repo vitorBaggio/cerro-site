@@ -1,4 +1,13 @@
 <?php
+/* Dinheiro em JSON precisa sair como 29.9, e nao como 29.899999999999999.
+   O PHP guarda decimal em binario, e com serialize_precision alto o
+   json_encode escreve todas as casas do float. round() nao resolve isso:
+   ele corrige o valor, nao a forma como o valor e escrito. Com -1 o PHP
+   escreve a representacao mais curta que volta exatamente ao mesmo numero.
+
+   Nao e cosmetico: esse JSON vira valor de cobranca no Mercado Pago. */
+ini_set('serialize_precision', -1);
+
 /* ==========================================================================
    Cerrô · Base comum dos endpoints
    --------------------------------------------------------------------------

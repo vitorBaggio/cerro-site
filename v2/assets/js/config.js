@@ -92,7 +92,7 @@ window.CERRO_CONFIG = {
   pagamento: {
     // 'whatsapp'    → pedido finalizado por WhatsApp (funciona sem servidor)
     // 'mercadopago' → cria a cobrança em api/ e leva ao checkout
-    modo: 'whatsapp',
+    modo: 'mercadopago',
 
     mercadoPago: {
       endpointPreferencia: 'api/criar-preferencia.php',
