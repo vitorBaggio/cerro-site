@@ -670,7 +670,7 @@
               <span class="campo__rotulo">Sabonete ${i + 1}</span>
               <select data-trio="${i}">
                 ${sabonetes.map((o) => `
-                  <option value="${esc(o.id)}"${o.id === id ? ' selected' : ''}>${esc(o.nome)}</option>`).join('')}
+                  <option value="${esc(o.id)}"${o.id === id ? ' selected' : ''}>${esc(o.nome)} (${esc(o.ritual)})</option>`).join('')}
               </select>
               <span class="campo__ajuda">${esc(s.essencias)}</span>
             </label>`;
