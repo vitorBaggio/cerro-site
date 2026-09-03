@@ -568,7 +568,10 @@
   .trinca { gap: .55rem; }
   .trinca__figura { height: clamp(110px, 21vh, 190px); border-radius: 12px; }
   .trinca__nome { font-size: .88rem; margin: .7rem 0 .15rem; line-height: 1.2; }
-  .trinca__meta { font-size: .48rem; letter-spacing: .1em; line-height: 1.5; }
+  /* .48rem da 7,7px, abaixo do que se le num celular. O tamanho de tela
+     grande e .6rem; aqui fica perto disso, e quem cede e o espacamento
+     entre letras, que era o que estava fazendo a linha nao caber. */
+  .trinca__meta { font-size: .58rem; letter-spacing: .06em; line-height: 1.5; }
   .trinca__item { transform: translateY(calc((1 - var(--eta)) * 14vh)); }
 }
 
@@ -634,7 +637,10 @@
 .escolha__preco { font-family: var(--serif); font-size: 1.4rem; margin-top: auto; }
 
 @media (max-width: 860px) {
-  .escolha { grid-template-columns: 1fr; }
+  /* width: min(94vw, 1240px) existe para os paineis respirarem mais que o
+     container em tela grande. No celular o container ja tem a margem certa,
+     e 94vw passava dele: 352px de conteudo numa caixa de 335. */
+  .escolha { grid-template-columns: 1fr; width: 100%; }
   .escolha__figura { aspect-ratio: 16/10; }
 }
 

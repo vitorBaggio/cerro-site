@@ -306,6 +306,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
   transition: color var(--media);
 }
 .icone-btn:hover { color: var(--barro); }
+/* O icone tem 20px, e dedo nao acerta 20px. O pseudo-elemento estende a
+   area de toque para ~44px sem mexer em nada do layout: se eu usasse
+   padding, os espacos do cabecalho mudariam de tamanho. */
+.icone-btn::before { content: ''; position: absolute; inset: -12px; }
 .icone-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.15; }
 
 .contador {
@@ -1030,9 +1034,21 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .trio-circulos:hover .trio-circulo:nth-child(3) { transform: translateX(-4%) rotate(4deg); }
 
 @media (max-width: 520px) {
-  .trio-circulo { width: 33vw; }
-  .trio-circulo:nth-child(1) { transform: translateX(14%) rotate(-2deg); }
-  .trio-circulo:nth-child(3) { transform: translateX(-14%) rotate(2deg); }
+  /* A sobreposicao era feita so com transform, e transform NAO mexe no
+     layout: a fileira continuava reservando 3 x 33vw = 99vw, mais larga
+     que o container com as margens. Era isso, e so isso, que fazia a
+     pagina inteira rolar para o lado no celular.
+
+     Agora quem sobrepoe e a margem negativa, que o layout enxerga. Ao
+     transform sobra a inclinacao, que e enfeite e pode ficar fora da
+     conta. Largura de layout: 3 x 30vw - 2 x 7vw = 76vw, sobra folga. */
+  .trio-circulos { min-height: 52vw; }
+  .trio-circulo { width: 30vw; }
+  .trio-circulo:nth-child(2),
+  .trio-circulo:nth-child(3) { margin-left: -7vw; }
+  .trio-circulo:nth-child(1) { transform: rotate(-2deg); }
+  .trio-circulo:nth-child(2) { transform: translateY(-5%) scale(1.06); }
+  .trio-circulo:nth-child(3) { transform: rotate(2deg); }
 }
 
 /* ==========================================================================
@@ -1172,7 +1188,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .rodape h4, .rodape .rodape__titulo { font-family: var(--sans); font-size: .64rem; letter-spacing: .26em; text-transform: uppercase; color: var(--areia); margin-bottom: 1.4rem; font-weight: 300; }
 .rodape ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
-.rodape a { transition: color var(--media); }
+/* Mesma razao dos icones: 20px de altura e pouco para o dedo. Aqui cabe
+   padding de verdade, porque o rodape tem espaco de sobra. */
+.rodape a { transition: color var(--media); display: inline-block; padding: .3rem 0; }
 .rodape a:hover { color: var(--dourado); }
 .rodape .marca__nome { color: var(--areia); }
 .rodape__base {
