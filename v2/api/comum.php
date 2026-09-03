@@ -24,7 +24,7 @@ if (!defined('CERRO')) define('CERRO', true);
    -------------------------------------------------------------------------- */
 $CERRO_LOJA = array(
   'frete_valor'          => 25.00,
-  'frete_gratis_acima'   => 200.00,   // null desativa a regra
+  'frete_gratis_acima'   => null,     // desativado a pedido do cliente
   'parcelas_maximas'     => 6,
   'moeda'                => 'BRL',
   'nome_loja'            => 'Cerrô · Banho do Cerrado',

@@ -30,7 +30,7 @@ window.CERRO_CONFIG = {
      ---------------------------------------------------------------------- */
   frete: {
     valorPadrao: 25.00,
-    freteGratisAcimaDe: 200.00,   // use null para desativar
+    freteGratisAcimaDe: null,     // desativado a pedido do cliente
     prazoTexto: '3 a 8 dias úteis após a confirmação do pagamento',
     preparoTexto: 'Produção artesanal: até 3 dias úteis de preparo antes do envio.',
   },

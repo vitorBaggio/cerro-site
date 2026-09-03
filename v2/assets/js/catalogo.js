@@ -235,9 +235,9 @@ window.CERRO_CATALOGO = {
      * NENHUM BOTÃO DO SITE USA ISTO. Servia de atalho, mas pulava a sacola:
      * sem endereço, sem frete, sem cupom e sem atendente. Quem clicava pagava
      * certo e a loja ficava sem saber para onde enviar. Fica guardado aqui
-     * para mandar à mão pelo WhatsApp quando fizer sentido. O valor bate
-     * com o que o site cobraria: R$ 220 de produto e frete grátis, porque
-     * o kit passa do limite de R$ 200.
+     * para mandar à mão pelo WhatsApp quando fizer sentido. ATENÇÃO: ele
+     * cobra só os R$ 220 do produto, e o frete grátis acima de R$ 200 foi
+     * desativado. Hoje esse link cobra menos que a sacola.
      *
      * ATENÇÃO ao mexer no preço do kit ou no limite do frete grátis: se os
      * dois deixarem de bater, o link passa a cobrar valor diferente do que

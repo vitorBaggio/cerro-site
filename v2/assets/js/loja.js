@@ -761,11 +761,19 @@
     if (!alvo) return;
 
     const slug = alvo.dataset.ritual;
-    const rit = CAT.rituais.find((r) => r.slug === slug);
+    /* Serve os tres rituais e tambem o Florescer Eterno, que fica fora da
+       trinca mas vende peca avulsa do mesmo jeito. Sem isto, a edicao de
+       presente so venderia o conjunto fechado. */
+    const rit = CAT.rituais.find((r) => r.slug === slug)
+      || (CAT.presente && CAT.presente.slug === slug ? CAT.presente : null);
     if (!rit) return;
 
+    /* O kit dos rituais tem preco unico; o do presente tem o seu, porque
+       sao quatro pecas e outro patamar de valor. */
+    const precoKit = rit.precoKit != null ? rit.precoKit : CAT.precos.kit;
+
     const somaAvulsos = rit.produtos.reduce((n, p) => n + p.preco, 0);
-    const economia = somaAvulsos - CAT.precos.kit;
+    const economia = somaAvulsos - precoKit;
 
     const opcoes = rit.produtos.map((p) => ({
       id: p.id,
@@ -778,8 +786,10 @@
     opcoes.push({
       id: `${rit.slug}-kit`,
       nome: 'Ritual Completo',
-      detalhe: 'Sabonete + Sais de banho + Geleia de banho',
-      preco: CAT.precos.kit,
+      detalhe: rit.precoKit != null
+        ? `${rit.produtos.length} peças, edição de presente`
+        : 'Sabonete + Sais de banho + Geleia de banho',
+      preco: precoKit,
       kit: true,
     });
 
@@ -813,7 +823,7 @@
         </div>
         <div class="total-seletor">
           <small>Total</small>
-          <span data-cerro="total-seletor">${dinheiro(CAT.precos.kit)}</span>
+          <span data-cerro="total-seletor">${dinheiro(precoKit)}</span>
         </div>
       </div>
 
@@ -849,7 +859,7 @@
         nome: sel.dataset.nome,
         ritual: rit.nomeCurto,
         ritualSlug: rit.slug,
-        detalhe: ehKit ? 'Ritual completo, 3 peças' : '',
+        detalhe: ehKit ? `Ritual completo, ${rit.produtos.length} peças` : '',
         preco: Number(sel.dataset.preco),
         foto: rit.foto,
         qtd: qtd,
