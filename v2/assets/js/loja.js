@@ -762,8 +762,7 @@
 
     const slug = alvo.dataset.ritual;
     /* Serve os tres rituais e tambem o Florescer Eterno, que fica fora da
-       trinca mas vende peca avulsa do mesmo jeito. Sem isto, a edicao de
-       presente so venderia o conjunto fechado. */
+       trinca mas vende peca avulsa do mesmo jeito. */
     const rit = CAT.rituais.find((r) => r.slug === slug)
       || (CAT.presente && CAT.presente.slug === slug ? CAT.presente : null);
     if (!rit) return;
@@ -771,7 +770,6 @@
     /* O kit dos rituais tem preco unico; o do presente tem o seu, porque
        sao quatro pecas e outro patamar de valor. */
     const precoKit = rit.precoKit != null ? rit.precoKit : CAT.precos.kit;
-
     const somaAvulsos = rit.produtos.reduce((n, p) => n + p.preco, 0);
     const economia = somaAvulsos - precoKit;
 
@@ -793,34 +791,37 @@
       kit: true,
     });
 
+    /* CADA LINHA TEM O SEU CONTADOR, e quantidade zero e o "nao quero".
+
+       Antes era radio, com um contador so para a caixa inteira: dava para
+       levar uma opcao por vez. Quem quisesse dois produtos diferentes tinha
+       que adicionar, trocar a marcacao e adicionar de novo. Funcionava, e
+       ninguem descobria sozinho: a pessoa escolhia um e ia embora. */
+    const qtds = opcoes.map((o) => (o.kit ? 1 : 0));
+
     alvo.innerHTML = `
       <p class="seletor__titulo">Monte o seu ritual</p>
 
-      <div class="opcoes" role="radiogroup" aria-label="Opções de compra">
+      <div class="opcoes">
         ${opcoes.map((o, i) => `
-          <label class="opcao${o.kit ? ' opcao--kit' : ''}">
-            <input type="radio" name="opcao-compra" value="${o.id}"
-                   data-preco="${o.preco}" data-nome="${esc(o.nome)}"
-                   ${i === opcoes.length - 1 ? 'checked' : ''}>
-            <span class="opcao__caixa">
-              <span class="opcao__marca" aria-hidden="true"></span>
+          <div class="opcao opcao--multi${o.kit ? ' opcao--kit' : ''}" data-i="${i}">
+            <div class="opcao__caixa">
               <span class="opcao__info">
                 <span class="opcao__nome">${esc(o.nome)}${o.kit && economia > 0
                   ? `<span class="selo-economia">Economize ${dinheiro(economia)}</span>` : ''}</span>
                 <span class="opcao__detalhe">${esc(o.detalhe)}</span>
               </span>
               <span class="opcao__preco">${dinheiro(o.preco)}</span>
-            </span>
-          </label>
-        `).join('')}
+              <span class="qtd qtd--linha">
+                <button type="button" data-passo="-1" aria-label="Tirar um ${esc(o.nome)}">−</button>
+                <span data-qtd aria-live="polite">0</span>
+                <button type="button" data-passo="1" aria-label="Somar um ${esc(o.nome)}">+</button>
+              </span>
+            </div>
+          </div>`).join('')}
       </div>
 
       <div class="linha-quantidade">
-        <div class="qtd">
-          <button type="button" data-passo="-1" aria-label="Diminuir quantidade">−</button>
-          <span data-cerro="qtd" aria-live="polite">1</span>
-          <button type="button" data-passo="1" aria-label="Aumentar quantidade">+</button>
-        </div>
         <div class="total-seletor">
           <small>Total</small>
           <span data-cerro="total-seletor">${dinheiro(precoKit)}</span>
@@ -828,45 +829,75 @@
       </div>
 
       <button class="btn btn--largo" type="button" data-cerro="add">Adicionar à sacola</button>
+      <button class="btn btn--vazado btn--largo" style="margin-top:.7rem"
+              type="button" data-cerro="add-ir">Ir para o carrinho</button>
       <p class="aviso-parcelas">${esc(CFG.frete.preparoTexto)}</p>`;
 
-    let qtd = 1;
-    const elQtd = $('[data-cerro="qtd"]', alvo);
+    const linhas = $$('.opcao--multi', alvo);
     const elTotal = $('[data-cerro="total-seletor"]', alvo);
 
-    const selecionada = () => $('input[name="opcao-compra"]:checked', alvo);
-
     function repintar() {
-      elQtd.textContent = qtd;
-      elTotal.textContent = dinheiro(Number(selecionada().dataset.preco) * qtd);
+      let total = 0;
+      linhas.forEach((el, i) => {
+        total += opcoes[i].preco * qtds[i];
+        $('[data-qtd]', el).textContent = qtds[i];
+        el.classList.toggle('opcao--ativa', qtds[i] > 0);
+      });
+      elTotal.textContent = dinheiro(total);
     }
 
-    $$('button[data-passo]', alvo).forEach((b) => {
-      b.addEventListener('click', () => {
-        qtd = Math.max(1, Math.min(99, qtd + Number(b.dataset.passo)));
-        repintar();
-      });
+    /* Um ouvinte no bloco inteiro em vez de um por botao: sao dez botoes
+       nas paginas de ritual e doze na do presente. */
+    alvo.addEventListener('click', (ev) => {
+      const b = ev.target.closest('button[data-passo]');
+      if (!b) return;
+      const i = Number(b.closest('.opcao--multi').dataset.i);
+      qtds[i] = Math.max(0, Math.min(99, qtds[i] + Number(b.dataset.passo)));
+      repintar();
     });
 
-    $$('input[name="opcao-compra"]', alvo).forEach((i) =>
-      i.addEventListener('change', repintar));
+    /* Devolve quantos itens foram para a sacola, ou zero se nada estava
+       escolhido. Serve aos dois botoes. */
+    function levarParaSacola() {
+      const levar = opcoes
+        .map((o, i) => ({ o, q: qtds[i] }))
+        .filter((x) => x.q > 0);
+
+      levar.forEach(({ o, q }) => {
+        Sacola.adicionar({
+          id: o.id,
+          nome: o.nome,
+          ritual: rit.nomeCurto,
+          ritualSlug: rit.slug,
+          detalhe: o.kit ? `Ritual completo, ${rit.produtos.length} peças` : '',
+          preco: o.preco,
+          foto: rit.foto,
+          qtd: q,
+        });
+      });
+
+      if (levar.length) {
+        qtds.fill(0);
+        repintar();
+      }
+      return levar;
+    }
 
     $('[data-cerro="add"]', alvo).addEventListener('click', () => {
-      const sel = selecionada();
-      const ehKit = sel.value.endsWith('-kit');
-      Sacola.adicionar({
-        id: sel.value,
-        nome: sel.dataset.nome,
-        ritual: rit.nomeCurto,
-        ritualSlug: rit.slug,
-        detalhe: ehKit ? `Ritual completo, ${rit.produtos.length} peças` : '',
-        preco: Number(sel.dataset.preco),
-        foto: rit.foto,
-        qtd: qtd,
-      });
-      avisar(`${sel.dataset.nome} · ${rit.nomeCurto} · adicionado à sacola`);
-      qtd = 1;
-      repintar();
+      const levar = levarParaSacola();
+      if (!levar.length) { avisar('Escolha ao menos um item'); return; }
+      const total = levar.reduce((n, x) => n + x.q, 0);
+      avisar(levar.length === 1 && total === 1
+        ? `${levar[0].o.nome} · ${rit.nomeCurto} · adicionado à sacola`
+        : `${total} itens adicionados à sacola`);
+    });
+
+    /* Vai para o carrinho de qualquer jeito, com ou sem escolha nova. Serve
+       para quem quer levar um item so sem procurar o icone da sacola, e para
+       quem acabou de escolher o ultimo e quer fechar. */
+    $('[data-cerro="add-ir"]', alvo).addEventListener('click', () => {
+      levarParaSacola();
+      window.location.href = 'carrinho.html';
     });
 
     repintar();

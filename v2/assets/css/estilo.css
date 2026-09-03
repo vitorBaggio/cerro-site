@@ -748,6 +748,29 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .qtd button:hover { color: var(--barro); background: rgba(175,101,68,.07); }
 .qtd span { min-width: 34px; text-align: center; font-size: .95rem; }
 
+/* --- Seletor de varios itens --------------------------------------------
+   Antes cada linha era um radio: so dava para levar uma opcao por vez.
+   Agora cada uma tem o seu contador, e quantidade zero e o "nao quero".
+   A linha acende quando passa de zero, para a escolha ficar visivel sem
+   depender de o olho achar um numerinho pequeno.
+   ---------------------------------------------------------------------- */
+.opcao--multi { cursor: default; }
+.opcao--multi:hover .opcao__caixa { transform: none; border-color: rgba(175,101,68,.3); }
+.opcao--multi.opcao--ativa .opcao__caixa {
+  border-color: var(--barro); background: rgba(175,101,68,.055);
+}
+
+.qtd--linha { flex: none; }
+.qtd--linha button { width: 34px; height: 34px; font-size: .95rem; }
+.qtd--linha span { min-width: 24px; font-size: .86rem; }
+
+@media (max-width: 460px) {
+  /* Em tela estreita o preco e o contador nao cabem lado a lado com o nome. */
+  .opcao--multi .opcao__caixa { flex-wrap: wrap; gap: .7rem 1rem; }
+  .opcao--multi .opcao__info { flex: 1 1 100%; }
+  .opcao--multi .opcao__preco { flex: 1; }
+}
+
 .total-seletor { font-family: var(--serif); font-size: 2rem; }
 .total-seletor small { font-family: var(--sans); font-size: .64rem; letter-spacing: .24em; text-transform: uppercase; color: var(--terra-suave); display: block; }
 
