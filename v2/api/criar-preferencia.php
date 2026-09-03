@@ -59,14 +59,29 @@ foreach ($dados['itens'] as $pedido) {
   $preco = (float) $catalogo[$id]['preco'];
   $subtotal += $preco * $qtd;
 
+  /* O trio vai para o Mercado Pago dizendo QUAIS sabonetes foram
+     escolhidos. Os ids vem do navegador, mas os NOMES saem daqui: se o
+     texto viesse pronto de la, bastaria abrir o console para escrever
+     qualquer coisa na tela de pagamento do cliente. Id que nao existe no
+     catalogo e simplesmente ignorado. */
+  $titulo = $catalogo[$id]['nome'];
+  if (!empty($it['escolha']) && is_array($it['escolha'])) {
+    $escolhidos = array();
+    foreach (array_slice($it['escolha'], 0, 6) as $eid) {
+      $eid = (string) $eid;
+      if (isset($catalogo[$eid])) $escolhidos[] = $catalogo[$eid]['nome'];
+    }
+    if ($escolhidos) $titulo .= ' — ' . implode(', ', $escolhidos);
+  }
+
   $itens[] = array(
     'id'          => $id,
-    'title'       => $catalogo[$id]['nome'],
+    'title'       => $titulo,
     'quantity'    => $qtd,
     'unit_price'  => round($preco, 2),
     'currency_id' => $CERRO_LOJA['moeda'],
   );
-  $resumo[] = $qtd . 'x ' . $catalogo[$id]['nome'];
+  $resumo[] = $qtd . 'x ' . $titulo;
 }
 
 /* --- Desconto, calculado aqui e não aceito do navegador ----------------

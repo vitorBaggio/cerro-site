@@ -62,9 +62,19 @@
       document.dispatchEvent(new CustomEvent('sacola:mudou', { detail: itens }));
     },
 
+    /* A chave da LINHA nao e o id do produto. Dois trios com sabonetes
+       diferentes tem o mesmo id no servidor, que e quem cobra, mas sao
+       linhas distintas na sacola. Sem isso o segundo trio somaria
+       quantidade no primeiro e a escolha dele desapareceria. */
+    chave(item) {
+      return item.escolha && item.escolha.length
+        ? item.id + '|' + item.escolha.join(',')
+        : item.id;
+    },
+
     adicionar(item) {
       const itens = Sacola.ler();
-      const existente = itens.find((i) => i.id === item.id);
+      const existente = itens.find((i) => Sacola.chave(i) === Sacola.chave(item));
       if (existente) {
         existente.qtd += item.qtd;
       } else {
@@ -73,19 +83,19 @@
       Sacola.gravar(itens);
     },
 
-    definirQtd(id, qtd) {
+    definirQtd(chave, qtd) {
       let itens = Sacola.ler();
       if (qtd <= 0) {
-        itens = itens.filter((i) => i.id !== id);
+        itens = itens.filter((i) => Sacola.chave(i) !== chave);
       } else {
-        const item = itens.find((i) => i.id === id);
+        const item = itens.find((i) => Sacola.chave(i) === chave);
         if (item) item.qtd = qtd;
       }
       Sacola.gravar(itens);
     },
 
-    remover(id) {
-      Sacola.gravar(Sacola.ler().filter((i) => i.id !== id));
+    remover(chave) {
+      Sacola.gravar(Sacola.ler().filter((i) => Sacola.chave(i) !== chave));
     },
 
     limpar() {
@@ -227,7 +237,7 @@
     },
 
     async cotar(cep) {
-      const itens = Sacola.ler().map((i) => ({ id: i.id, qtd: i.qtd }));
+      const itens = Sacola.ler().map((i) => ({ id: i.id, qtd: i.qtd, escolha: i.escolha || undefined }));
       const resp = await fetch('api/frete.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -727,25 +737,32 @@
 
       if (!ev.target.closest('[data-cerro="add-trio"]')) return;
 
-      /* Três iguais viram uma linha de quantidade 3, não três linhas de 1:
-         a sacola fica legível e a conta dá no mesmo. */
-      const contagem = {};
-      escolha.forEach((id) => { contagem[id] = (contagem[id] || 0) + 1; });
+      /* O TRIO ENTRA COMO UMA LINHA SÓ, e não como três sabonetes soltos.
 
-      Object.entries(contagem).forEach(([id, vezes]) => {
-        const s = sabonetes.find((x) => x.id === id);
-        Sacola.adicionar({
-          id,
-          nome: s.nome,
-          ritual: s.ritual,
-          detalhe: 'Do Trio de Sabonetes',
-          preco: s.preco,
-          foto: '',
-          qtd: vezes * qtd,
-        });
+         Antes a sacola, o checkout e o Mercado Pago mostravam três itens
+         avulsos, e a informação de que aquilo era um trio se perdia no
+         caminho: quem fosse separar o pedido via três sabonetes e não
+         sabia que iam juntos numa caixa. E o preço somava 3 x 28 = 84
+         por coincidência, não por regra.
+
+         Os sabonetes escolhidos viajam em 'escolha', só os ids. Quem
+         escreve o texto que aparece no Mercado Pago é o servidor, a
+         partir desses ids: se o texto viesse pronto daqui, daria para
+         escrever qualquer coisa no checkout pelo console. */
+      const nomes = escolha.map((id) => sabonetes.find((s) => s.id === id).nome);
+
+      Sacola.adicionar({
+        id: 'trio-sabonetes',
+        nome: 'Trio de Sabonetes',
+        ritual: '',
+        ritualSlug: 'trio',
+        detalhe: nomes.join(' · '),
+        escolha: escolha.slice(),
+        preco: CAT.precos.trio,
+        foto: '',
+        qtd: qtd,
       });
 
-      const nomes = escolha.map((id) => sabonetes.find((s) => s.id === id).nome);
       avisar('Trio adicionado: ' + nomes.join(', '));
     });
 
@@ -1051,11 +1068,11 @@
             <h3 class="item-carrinho__nome">${esc(i.nome)}</h3>
             <p class="item-carrinho__ritual">${esc(i.ritual || '')}${i.detalhe ? ' · ' + esc(i.detalhe) : ''}</p>
             <div class="qtd" style="margin-top:.7rem">
-              <button type="button" data-id="${esc(i.id)}" data-passo="-1" aria-label="Diminuir">−</button>
+              <button type="button" data-id="${esc(Sacola.chave(i))}" data-passo="-1" aria-label="Diminuir">−</button>
               <span>${i.qtd}</span>
-              <button type="button" data-id="${esc(i.id)}" data-passo="1" aria-label="Aumentar">+</button>
+              <button type="button" data-id="${esc(Sacola.chave(i))}" data-passo="1" aria-label="Aumentar">+</button>
             </div>
-            <button class="remover" data-remover="${esc(i.id)}">Remover</button>
+            <button class="remover" data-remover="${esc(Sacola.chave(i))}">Remover</button>
           </div>
           <div class="item-carrinho__preco">${dinheiro(i.preco * i.qtd)}</div>
         </div>
@@ -1235,8 +1252,8 @@
       const remover = ev.target.closest('button[data-remover]');
 
       if (passo) {
-        const item = Sacola.ler().find((i) => i.id === passo.dataset.id);
-        if (item) Sacola.definirQtd(item.id, item.qtd + Number(passo.dataset.passo));
+        const item = Sacola.ler().find((i) => Sacola.chave(i) === passo.dataset.id);
+        if (item) Sacola.definirQtd(passo.dataset.id, item.qtd + Number(passo.dataset.passo));
       }
       if (remover) Sacola.remover(remover.dataset.remover);
     });
@@ -1376,7 +1393,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          itens: itens.map((i) => ({ id: i.id, qtd: i.qtd })),
+          itens: itens.map((i) => ({ id: i.id, qtd: i.qtd, escolha: i.escolha || undefined })),
           cliente: cliente
             ? { nome: cliente.nome, email: cliente.email, whatsapp: cliente.whatsapp }
             : null,
