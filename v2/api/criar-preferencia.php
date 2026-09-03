@@ -65,9 +65,9 @@ foreach ($dados['itens'] as $pedido) {
      qualquer coisa na tela de pagamento do cliente. Id que nao existe no
      catalogo e simplesmente ignorado. */
   $titulo = $catalogo[$id]['nome'];
-  if (!empty($it['escolha']) && is_array($it['escolha'])) {
+  if (!empty($pedido['escolha']) && is_array($pedido['escolha'])) {
     $escolhidos = array();
-    foreach (array_slice($it['escolha'], 0, 6) as $eid) {
+    foreach (array_slice($pedido['escolha'], 0, 6) as $eid) {
       $eid = (string) $eid;
       if (isset($catalogo[$eid])) $escolhidos[] = $catalogo[$eid]['nome'];
     }
