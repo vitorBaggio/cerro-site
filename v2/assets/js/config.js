@@ -13,11 +13,11 @@ window.CERRO_CONFIG = {
     assinatura: 'Banho do Cerrado',
     slogan: 'Sinta a força da terra, viva o seu ritual.',
 
-    razaoSocial: 'PREENCHER: razão social',
-    cnpj:        'PREENCHER: 00.000.000/0001-00',
-    cidade:      'PREENCHER: cidade / MT',
+    razaoSocial: 'Henrique Cesar Suita Fornari',
+    cnpj:        '68.401.045/0001-01',
+    cidade:      'Cuiabá / MT',
 
-    email:     'PREENCHER@exemplo.com.br',
+    email:     'suporte@cerrodocerrado.com',
     whatsapp:  '5565900000000',        // só números, com 55 + DDD
     instagram: 'cerro.banhodocerrado', // sem o @
   },
